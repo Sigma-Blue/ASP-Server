@@ -8,30 +8,30 @@ datasource db {
 }
 
 model User {
-  id                 String           @id @default(uuid())
-  userName           String           @unique
-  email              String           @unique
+  id                 String        @id @default(uuid())
+  userName           String        @unique
+  email              String        @unique
   passwordHashed     String
-  registeredAt       DateTime         @default(now())
-  lastLogin          DateTime         @updatedAt
-  role               role             @default(BASIC)
-  commentBy          Comment[]        @relation("commentedBy")
-  commentOn          Comment[]        @relation("commentedOn")
+  registeredAt       DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  role               role          @default(BASIC)
+  commentBy          Comment[]     @relation("commentedBy")
+  commentOn          Comment[]     @relation("commentedOn")
   course             Course[]
   location           Location?
   post               Post[]
   profile            Profile?
-  reactby            Reaction[]       @relation("reactedBy")
-  reactOn            Reaction[]       @relation("reactedOn")
-  saveBy             Save[]           @relation("savedBy")
-  saveOn             Save[]           @relation("savedOn")
-  fromUserFollowship UserFollowship[] @relation("fromUser")
-  toUserFollowship   UserFollowship[] @relation("toUser")
+  reactby            Reaction[]    @relation("reactedBy")
+  reactOn            Reaction[]    @relation("reactedOn")
+  saveBy             Save[]        @relation("savedBy")
+  saveOn             Save[]        @relation("savedOn")
+  fromUserFollowship UserFollows[] @relation("fromUser")
+  toUserFollowship   UserFollows[] @relation("toUser")
 
   @@index([email, userName])
 }
 
-model UserFollowship {
+model UserFollows {
   id         String   @id @default(uuid())
   isAccepted Boolean  @default(false)
   createdAt  DateTime @default(now())
@@ -67,16 +67,16 @@ model Profile {
 
 model Location {
   id           String  @id @default(uuid())
-  addressline1 String
-  addressline2 String
+  addressLine1 String
+  addressLine2 String
   city         String
   state        String
   country      String
-  postalcode   String
+  postalCode   String
   nationality  String
   contactNo    String
-  profileId    String  @unique
-  userId       String  @unique
+  profileId    String  @unique @default("NULL")
+  userId       String  @unique @default("NULL")
   belongsTo    Profile @relation(fields: [profileId], references: [id])
   relatedTo    User    @relation(fields: [userId], references: [id])
 }
@@ -101,7 +101,7 @@ model Post {
 model Course {
   id                String   @id @default(uuid())
   courseName        String
-  courseDescrpt     String
+  courseDescription String
   startDate         DateTime
   endDate           DateTime
   timePeriod        Int
@@ -116,13 +116,12 @@ model Course {
 
 model About {
   id               String   @id @default(uuid())
-  profileAbout     String
+  aboutDescription String   @default("NULL")
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   isPost           Boolean
-  postAbout        String
-  profileId        String   @unique
-  postId           String   @unique
+  profileId        String   @unique @default("NULL")
+  postId           String   @unique @default("NULL")
   postBelongsTo    Post     @relation(fields: [postId], references: [id])
   profileBelongsTo Profile  @relation(fields: [profileId], references: [id])
 }
@@ -131,7 +130,7 @@ model Image {
   id               String   @id @default(uuid())
   isPost           Boolean
   isBanner         Boolean
-  imageExtention   String
+  imageExtension   String
   imageType        String
   imageValue       String
   createdAt        DateTime @default(now())
@@ -213,5 +212,5 @@ model Save {
 
 enum role {
   BASIC
-  ADMINK
+  ADMIN
 }

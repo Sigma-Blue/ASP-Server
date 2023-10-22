@@ -26,13 +26,15 @@ app.use((req, res, next) => {
 	next();
 });
 
-// Routes
-app.use('/api/v1/example', exampleRouter);
+// Initial page
 
 app.get('/', (req, res) => {
 	res.send(
 		'<center><h1> Alumni Student Platform API created By Metta Surendhar </h1><center>'
 	);
 });
+
+// Routes
+app.use('/api/v1/example', exampleRouter);
 
 module.exports = app;
