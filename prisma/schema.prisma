@@ -7,36 +7,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// TODO: Create your schema here
-
-// model Example {
-//   id        String      @id @default(uuid())
-//   createdAt DateTime @default( now())
-//   updatedAt DateTime @updatedAt
-//   name      String
-// }
-
 model User {
-  id             String   @id @default(uuid())
-  userName       String   @unique
-  email          String   @unique
-  passwordHashed String
-  registeredAt   DateTime @default(now())
-  lastLogin      DateTime @updatedAt
-  role           role     @default(BASIC)
-
-  post               Post[]
-  fromUserFollowship UserFollowship[] @relation("fromUser")
-  toUserFollowship   UserFollowship[] @relation("toUser")
-  commentOn          Comment[]        @relation("commentedOn")
+  id                 String           @id @default(uuid())
+  userName           String           @unique
+  email              String           @unique
+  passwordHashed     String
+  registeredAt       DateTime         @default(now())
+  lastLogin          DateTime         @updatedAt
+  role               role             @default(BASIC)
   commentBy          Comment[]        @relation("commentedBy")
-  saveBy             Save[]           @relation("savedBy")
-  saveOn             Save[]           @relation("savedOn")
-  reactOn            Reaction[]       @relation("reactedOn")
-  reactby            Reaction[]       @relation("reactedBy")
-  profile            Profile?
+  commentOn          Comment[]        @relation("commentedOn")
   course             Course[]
   location           Location?
+  post               Post[]
+  profile            Profile?
+  reactby            Reaction[]       @relation("reactedBy")
+  reactOn            Reaction[]       @relation("reactedOn")
+  saveBy             Save[]           @relation("savedBy")
+  saveOn             Save[]           @relation("savedOn")
+  fromUserFollowship UserFollowship[] @relation("fromUser")
+  toUserFollowship   UserFollowship[] @relation("toUser")
 
   @@index([email, userName])
 }
@@ -46,35 +36,33 @@ model UserFollowship {
   isAccepted Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  fromUSer   User     @relation("fromUser", fields: [fromUserId], references: [id])
-  toUser     User     @relation("toUser", fields: [toUserId], references: [id])
   fromUserId String
   toUserId   String
+  fromUSer   User     @relation("fromUser", fields: [fromUserId], references: [id])
+  toUser     User     @relation("toUser", fields: [toUserId], references: [id])
 }
 
 model Profile {
-  id             String   @id @default(uuid())
+  id             String     @id @default(uuid())
   firstName      String
   middleName     String
   lastName       String
   userType       String
   departmentName String
-  registerNo     Int      @unique
+  registerNo     Int        @unique
   birthDate      DateTime
   gender         String
   age            Int
-  createdBy      User     @relation(fields: [userId], references: [id])
-  userId         String   @unique
-
-  Course Course[]
-  about  About?
-
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  Location  Location?
-  Image     Image[]
-  Document  Document[]
-  Link      Link[]
+  userId         String     @unique
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  createdBy      User       @relation(fields: [userId], references: [id])
+  about          About?
+  Course         Course[]
+  Document       Document[]
+  Image          Image[]
+  Link           Link[]
+  Location       Location?
 }
 
 model Location {
@@ -87,10 +75,10 @@ model Location {
   postalcode   String
   nationality  String
   contactNo    String
-  belongsTo    Profile @relation(fields: [profileId], references: [id])
-  relatedTo    User    @relation(fields: [userId], references: [id])
   profileId    String  @unique
   userId       String  @unique
+  belongsTo    Profile @relation(fields: [profileId], references: [id])
+  relatedTo    User    @relation(fields: [userId], references: [id])
 }
 
 model Post {
@@ -99,15 +87,15 @@ model Post {
   postType        String
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
-  createdBy       User       @relation(fields: [userId], references: [id])
   userId          String
-  Image           Image[]
-  Document        Document[]
-  Link            Link[]
-  Comment         Comment[]
-  Save            Save[]
-  Reaction        Reaction[]
+  createdBy       User       @relation(fields: [userId], references: [id])
   about           About?
+  Comment         Comment[]
+  Document        Document[]
+  Image           Image[]
+  Link            Link[]
+  Reaction        Reaction[]
+  Save            Save[]
 }
 
 model Course {
@@ -120,23 +108,23 @@ model Course {
   instituteName     String
   instituteLocation String
   isRemote          Boolean
-  belongsTo         Profile  @relation(fields: [profileId], references: [id])
-  relatedTo         User     @relation(fields: [userId], references: [id])
   profileId         String
   userId            String
+  belongsTo         Profile  @relation(fields: [profileId], references: [id])
+  relatedTo         User     @relation(fields: [userId], references: [id])
 }
 
 model About {
   id               String   @id @default(uuid())
-  profileAbout     String   @db.Text
+  profileAbout     String
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   isPost           Boolean
   postAbout        String
-  postBelongsTo    Post     @relation(fields: [postId], references: [id])
-  profileBelongsTo Profile  @relation(fields: [profileId], references: [id])
   profileId        String   @unique
   postId           String   @unique
+  postBelongsTo    Post     @relation(fields: [postId], references: [id])
+  profileBelongsTo Profile  @relation(fields: [profileId], references: [id])
 }
 
 model Image {
@@ -148,10 +136,10 @@ model Image {
   imageValue       String
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  postBelongsTo    Post     @relation(fields: [postId], references: [id])
-  profileBelongsTo Profile  @relation(fields: [profileId], references: [id])
   postId           String
   profileId        String
+  postBelongsTo    Post     @relation(fields: [postId], references: [id])
+  profileBelongsTo Profile  @relation(fields: [profileId], references: [id])
 }
 
 model Document {
@@ -163,10 +151,10 @@ model Document {
   docValue         String
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  postBelongsTo    Post     @relation(fields: [postId], references: [id])
-  profileBelongsTo Profile  @relation(fields: [profileId], references: [id])
   postId           String
   profileId        String
+  postBelongsTo    Post     @relation(fields: [postId], references: [id])
+  profileBelongsTo Profile  @relation(fields: [profileId], references: [id])
 }
 
 model Link {
@@ -176,27 +164,25 @@ model Link {
   linkUrl          String
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  postBelongsTo    Post     @relation(fields: [postId], references: [id])
-  profileBelongsTo Profile  @relation(fields: [profileId], references: [id])
   postId           String
   profileId        String
+  postBelongsTo    Post     @relation(fields: [postId], references: [id])
+  profileBelongsTo Profile  @relation(fields: [profileId], references: [id])
 }
 
 model Comment {
   id                String    @id @default(uuid())
-  commentBody       String    @db.Text
+  commentBody       String
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
-  userCommentedOn   User      @relation("commentedOn", fields: [commentedOnId], references: [id])
-  commentedByUserId User      @relation("commentedBy", fields: [commentedById], references: [id])
-  postCommentedOn   Post      @relation(fields: [postId], references: [id])
-  //  commentsRelatedToUser RelatedComments[]
-  //  commentsRelatedToPosts RelatedComments[]
   commentedOnId     String
   commentedById     String
   postId            String
-  replyOnComment    Comment   @relation("repliedOn", fields: [commentId], references: [id])
   commentId         String
+  replyOnComment    Comment   @relation("repliedOn", fields: [commentId], references: [id])
+  commentedByUserId User      @relation("commentedBy", fields: [commentedById], references: [id])
+  userCommentedOn   User      @relation("commentedOn", fields: [commentedOnId], references: [id])
+  postCommentedOn   Post      @relation(fields: [postId], references: [id])
   comment           Comment[] @relation("repliedOn")
 }
 
@@ -205,29 +191,24 @@ model Reaction {
   reactionType    String
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  //  reactionsRelatedToReactions RelatedReaction[]
-  //  reactionsRelatedToUsers RelatedReaction[]
-  //  reactionsRelatedToPosts RelatedReaction[]
-  userReactedOn   User     @relation("reactedOn", fields: [reactedOnId], references: [id])
-  reactedByUserId User     @relation("reactedBy", fields: [reactedById], references: [id])
-  postReactedOn   Post     @relation(fields: [postId], references: [id])
   reactedOnId     String
   reactedById     String
   postId          String
+  postReactedOn   Post     @relation(fields: [postId], references: [id])
+  reactedByUserId User     @relation("reactedBy", fields: [reactedById], references: [id])
+  userReactedOn   User     @relation("reactedOn", fields: [reactedOnId], references: [id])
 }
 
 model Save {
   id            String   @id @default(uuid())
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  //  savesRelatedToUsers SavesRelation[]
-  //  savesRelatedToPosts SavesRelation[]
-  savedByUserId User     @relation("savedBy", fields: [savedById], references: [id])
-  userSavedOn   User     @relation("savedOn", fields: [savedOnId], references: [id])
-  postSavedOn   Post     @relation(fields: [postId], references: [id])
   savedById     String
   savedOnId     String
   postId        String
+  postSavedOn   Post     @relation(fields: [postId], references: [id])
+  savedByUserId User     @relation("savedBy", fields: [savedById], references: [id])
+  userSavedOn   User     @relation("savedOn", fields: [savedOnId], references: [id])
 }
 
 enum role {
