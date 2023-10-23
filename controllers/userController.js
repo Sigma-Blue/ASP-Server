@@ -1,5 +1,5 @@
 const userModel = require('./../models/userModel');
-const hashUtil = require('../utils/hashUtil');
+const hashUserPassword = require('../services/hashUserPassword');
 const emailUtil = require('../utils/emailUtil');
 
 //	@route	POST	/register
@@ -26,7 +26,7 @@ exports.registerUser = async (req, res) => {
 		});
 	}
 
-	const passwordHashed = hashUtil.hashPassword(password);
+	const passwordHashed = hashUserPassword.hashPassword(password);
 
 	const { result: createdUser, error: createdErr } = await userModel.createUser(
 		userName,
@@ -82,7 +82,7 @@ exports.loginUser = async (req, res) => {
 		});
 	}
 
-	const isMatch = hashUtil.verifyPassword(
+	const isMatch = hashUserPassword.verifyPassword(
 		password,
 		selectedUser.passwordHashed
 	);
@@ -109,7 +109,7 @@ exports.resetPassword = async (req, res) => {
 
 	// get email of the user and send otp
 
-	const passwordHashed = hashUtil.hashPassword(password);
+	const passwordHashed = hashUserPassword.hashPassword(password);
 
 	const { result: updatedUser, error: updatedErr } =
 		await userModel.updatePasswordById(id, passwordHashed);

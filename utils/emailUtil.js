@@ -1,17 +1,8 @@
-const mailer = require('nodemailer');
+const emailTransporter = require('./../services/emailTransporter');
 const fs = require('fs');
 // Creates a mailer transporter object with authentication and base config
 
-const transport = mailer.createTransport({
-	host: 'smtp.gmail.com',
-	port: 587,
-	secure: false,
-	service: 'gmail',
-	auth: {
-		user: process.env.USER,
-		pass: process.env.APP_PASSWORD,
-	},
-});
+const transport = emailTransporter;
 
 exports.registrationMailer = (toMailId, userName) => {
 	try {
