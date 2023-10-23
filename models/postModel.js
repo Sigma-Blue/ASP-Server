@@ -114,6 +114,7 @@ const deletePost = async (id) => {
 		deleteCommentByPostId(id);
 		deleteReactionByPostId(id);
 		deleteSaveByPostId(id);
+		return { result: null, error: null };
 	} catch (err) {
 		return { result: null, error: err.message };
 	}
@@ -128,6 +129,7 @@ const deleteReactionById = async (id) => {
 				id: id,
 			},
 		});
+		return { result: null, error: null };
 	} catch (err) {
 		return { result: null, error: err.message };
 	}
@@ -142,6 +144,7 @@ const deleteReactionByPostId = async (id) => {
 				postId: id,
 			},
 		});
+		return { result: null, error: null };
 	} catch (err) {
 		return { result: null, error: err.message };
 	}
@@ -156,6 +159,7 @@ const deleteCommentById = async (id) => {
 				id: id,
 			},
 		});
+		return { result: null, error: null };
 	} catch (err) {
 		return { result: null, error: err.message };
 	}
@@ -170,6 +174,7 @@ const deleteCommentByPostId = async (id) => {
 				postId: id,
 			},
 		});
+		return { result: null, error: null };
 	} catch (err) {
 		return { result: null, error: err.message };
 	}
@@ -184,6 +189,7 @@ const deleteSaveById = async (id) => {
 				id: id,
 			},
 		});
+		return { result: null, error: null };
 	} catch (err) {
 		return { result: null, error: err.message };
 	}
@@ -198,6 +204,7 @@ const deleteSaveByPostId = async (id) => {
 				postId: id,
 			},
 		});
+		return { result: null, error: null };
 	} catch (err) {
 		return { result: null, error: err.message };
 	}

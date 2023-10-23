@@ -142,6 +142,7 @@ const deleteImageById = async (id) => {
 				id: id,
 			},
 		});
+		return { result: null, error: null };
 	} catch (err) {
 		return { result: null, error: err.message };
 	}
@@ -156,6 +157,7 @@ const deleteDocumentById = async (id) => {
 				id: id,
 			},
 		});
+		return { result: null, error: null };
 	} catch (err) {
 		return { result: null, error: err.message };
 	}
@@ -170,6 +172,7 @@ const deleteLinkById = async (id) => {
 				id: id,
 			},
 		});
+		return { result: null, error: null };
 	} catch (err) {
 		return { result: null, error: err.message };
 	}

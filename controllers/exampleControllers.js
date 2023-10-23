@@ -10,9 +10,8 @@
           error : error.message
         }
     }
-dddddddddddddddddd
-    #code & #error_msg :
 
+    #code & #error_msg :
     500 -> Internal Server Error
     200 -> Successfully fetched all activities
     404 -> Activity not found

@@ -109,6 +109,7 @@ const deleteUserFollowsByFromId = async (id) => {
 				fromUserId: id,
 			},
 		});
+		return { result: null, error: null };
 	} catch (err) {
 		return { result: null, error: err.message };
 	}

@@ -233,6 +233,7 @@ const deleteCourseById = async (id) => {
 				id: id,
 			},
 		});
+		return { result: null, error: null };
 	} catch (err) {
 		return { result: null, error: err.message };
 	}
