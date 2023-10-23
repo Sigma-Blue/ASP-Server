@@ -4,7 +4,7 @@ const prisma = require('../prisma/prisma');
 
 //* For Creating new Post for a user
 
-const createPost = async (pDesc, pType, userId) => {
+exports.createPost = async (pDesc, pType, userId) => {
 	try {
 		const post = await prisma.post.create({
 			data: {
@@ -21,7 +21,12 @@ const createPost = async (pDesc, pType, userId) => {
 
 //* For Creating Reaction to a Post
 
-const createReaction = async (reactType, reactedOnId, reactedById, postId) => {
+exports.createReaction = async (
+	reactType,
+	reactedOnId,
+	reactedById,
+	postId
+) => {
 	try {
 		const reaction = await prisma.reaction.create({
 			data: {
@@ -45,7 +50,7 @@ const createReaction = async (reactType, reactedOnId, reactedById, postId) => {
 
 //* For Creating Comment to a post
 
-const createComment = async (
+exports.createComment = async (
 	commentBody,
 	commentedOnId,
 	commentedById,
@@ -78,7 +83,7 @@ const createComment = async (
 
 //* For Creating Save to a post
 
-const createdSave = async (savedOnId, saveById, postId) => {
+exports.createdSave = async (savedOnId, saveById, postId) => {
 	try {
 		const save = await prisma.save.create({
 			data: {
@@ -103,7 +108,7 @@ const createdSave = async (savedOnId, saveById, postId) => {
 
 //* For deleting a post by Post ID
 
-const deletePost = async (id) => {
+exports.deletePost = async (id) => {
 	try {
 		const post = await prisma.post.delete({
 			where: {
@@ -122,7 +127,7 @@ const deletePost = async (id) => {
 
 //* For deleting a Reaction by Reaction ID
 
-const deleteReactionById = async (id) => {
+exports.deleteReactionById = async (id) => {
 	try {
 		const reaction = await prisma.reaction.delete({
 			where: {
@@ -137,7 +142,7 @@ const deleteReactionById = async (id) => {
 
 //* For deleting a Reaction by Post ID
 
-const deleteReactionByPostId = async (id) => {
+exports.deleteReactionByPostId = async (id) => {
 	try {
 		const reaction = await prisma.reaction.delete({
 			where: {
@@ -152,7 +157,7 @@ const deleteReactionByPostId = async (id) => {
 
 //* For deleting a Comment by Comment ID
 
-const deleteCommentById = async (id) => {
+exports.deleteCommentById = async (id) => {
 	try {
 		const comment = await prisma.comment.delete({
 			where: {
@@ -167,7 +172,7 @@ const deleteCommentById = async (id) => {
 
 //* For deleting a Comment by Post ID
 
-const deleteCommentByPostId = async (id) => {
+exports.deleteCommentByPostId = async (id) => {
 	try {
 		const comment = await prisma.comment.delete({
 			where: {
@@ -182,7 +187,7 @@ const deleteCommentByPostId = async (id) => {
 
 //* For deleting a Save by Save ID
 
-const deleteSaveById = async (id) => {
+exports.deleteSaveById = async (id) => {
 	try {
 		const save = await prisma.save.delete({
 			where: {
@@ -195,9 +200,9 @@ const deleteSaveById = async (id) => {
 	}
 };
 
-//* For deleting a Save by Post ID
+//* For deleting a Save by Post Id
 
-const deleteSaveByPostId = async (id) => {
+exports.ports.deleteSaveByPostId = async (id) => {
 	try {
 		const save = await prisma.save.delete({
 			where: {
@@ -214,7 +219,7 @@ const deleteSaveByPostId = async (id) => {
 
 //* For Selecting the set of Posts by UserId
 
-const selectPostsByUserId = async (id) => {
+exports.selectPostsByUserId = async (id) => {
 	try {
 		const post = await prisma.post.findMany({
 			where: {
@@ -234,7 +239,7 @@ const selectPostsByUserId = async (id) => {
 
 //* For Selecting the set of Posts by PostId
 
-const selectPostsByPostId = async (id) => {
+exports.selectPostsByPostId = async (id) => {
 	try {
 		const post = await prisma.post.findMany({
 			where: {
@@ -254,7 +259,7 @@ const selectPostsByPostId = async (id) => {
 
 //* For Selecting the set of Saved by User/savedBy Id
 
-const selectSavesByUserId = async (id) => {
+exports.selectSavesByUserId = async (id) => {
 	try {
 		const save = await prisma.save.findMany({
 			where: {
@@ -272,7 +277,7 @@ const selectSavesByUserId = async (id) => {
 
 //* For Selecting the set of Reacted by User/reactedBy Id
 
-const selectReactionsByUserId = async (id) => {
+exports.selectReactionsByUserId = async (id) => {
 	try {
 		const reaction = await prisma.reaction.findMany({
 			where: {
@@ -291,7 +296,7 @@ const selectReactionsByUserId = async (id) => {
 
 //* For Selecting the set of Commented by User/commentedBy Id
 
-const selectCommentsByUserId = async (id) => {
+exports.selectCommentsByUserId = async (id) => {
 	try {
 		const comment = await prisma.comment.findMany({
 			where: {

@@ -4,7 +4,7 @@ const prisma = require('../prisma/prisma');
 
 //* For creating a new user
 
-const createUser = async (userName, email, password, role) => {
+exports.createUser = async (userName, email, password, role) => {
 	try {
 		const user = await prisma.user.create({
 			data: {
@@ -23,7 +23,7 @@ const createUser = async (userName, email, password, role) => {
 
 //* For creating user Following from one user to another
 
-const createUserFollows = async (isAccepted, fromUserId, toUserId) => {
+exports.createUserFollows = async (isAccepted, fromUserId, toUserId) => {
 	try {
 		const userFollows = await prisma.userFollows.create({
 			data: {
@@ -46,7 +46,7 @@ const createUserFollows = async (isAccepted, fromUserId, toUserId) => {
 
 //* For updating new Password to the user
 
-const updatePasswordById = async (id, password) => {
+exports.updatePasswordById = async (id, password) => {
 	try {
 		const user = await prisma.user.update({
 			where: {
@@ -64,7 +64,7 @@ const updatePasswordById = async (id, password) => {
 
 //* For updating new userName to the user
 
-const updateUserNameById = async (id, userName) => {
+exports.updateUserNameById = async (id, userName) => {
 	try {
 		const user = await prisma.user.update({
 			where: {
@@ -82,7 +82,7 @@ const updateUserNameById = async (id, userName) => {
 
 //* For updating isAccepted by Id
 
-const updateUserFollowsByFromId = async (id) => {
+exports.updateUserFollowsByFromId = async (id) => {
 	try {
 		const userFollows = await prisma.userFollows.update({
 			where: {
@@ -102,7 +102,7 @@ const updateUserFollowsByFromId = async (id) => {
 
 //* For deleting user following by FromUserId
 
-const deleteUserFollowsByFromId = async (id) => {
+exports.deleteUserFollowsByFromId = async (id) => {
 	try {
 		const userFollows = await prisma.userFollows.deleteMany({
 			where: {
@@ -119,7 +119,7 @@ const deleteUserFollowsByFromId = async (id) => {
 
 //* For Selecting the unique UserID and Password by UserName
 
-const selectUserInfoByUserName = async (userName) => {
+exports.selectUserInfoByUserName = async (userName) => {
 	try {
 		const user = await prisma.user.findUnique({
 			where: {
@@ -138,7 +138,7 @@ const selectUserInfoByUserName = async (userName) => {
 
 //* For Selecting the unique UserID and Password by UserName
 
-const selectUserByUserId = async (id) => {
+exports.selectUserByUserId = async (id) => {
 	try {
 		const user = await prisma.user.findUnique({
 			where: {
@@ -153,7 +153,7 @@ const selectUserByUserId = async (id) => {
 
 //* For Selecting the Followers by From User Id
 
-const selectUserFollowsByFromId = async (id) => {
+exports.selectUserFollowsByFromId = async (id) => {
 	try {
 		const userFollows = await prisma.userFollows.findMany({
 			where: {
@@ -171,7 +171,7 @@ const selectUserFollowsByFromId = async (id) => {
 	}
 };
 
-const selectUserFollowsByToId = async (id) => {
+exports.selectUserFollowsByToId = async (id) => {
 	try {
 		const user = await prisma.userFollows.findMany({
 			where: {

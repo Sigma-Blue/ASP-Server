@@ -4,7 +4,7 @@ const prisma = require('../prisma/prisma');
 
 //* For creating Profile of an user
 
-const createProfile = async (
+exports.createProfile = async (
 	fName,
 	mName,
 	lName,
@@ -43,7 +43,7 @@ const createProfile = async (
 
 //* For creating user/profile Location
 
-const createLocation = async (
+exports.createLocation = async (
 	addr1,
 	addr2,
 	city,
@@ -82,7 +82,7 @@ const createLocation = async (
 
 //* For creating profile Course
 
-const createCourse = async (
+exports.createCourse = async (
 	crsName,
 	crsDesc,
 	sDate,
@@ -120,7 +120,7 @@ const createCourse = async (
 
 //* For updating Profile info by Profile ID
 
-const updateProfileById = async (
+exports.updateProfileById = async (
 	id,
 	fName,
 	mName,
@@ -157,7 +157,7 @@ const updateProfileById = async (
 
 //* For updating Location info by Location ID
 
-const updateLocationById = async (
+exports.updateLocationById = async (
 	id,
 	addr1,
 	addr2,
@@ -192,7 +192,7 @@ const updateLocationById = async (
 
 //* For updating Course by Course Id
 
-const updateCourseById = async (
+exports.updateCourseById = async (
 	id,
 	crsName,
 	crsDesc,
@@ -226,7 +226,7 @@ const updateCourseById = async (
 
 //* For deleting course by using Course ID
 
-const deleteCourseById = async (id) => {
+exports.deleteCourseById = async (id) => {
 	try {
 		const course = await prisma.course.deleteMany({
 			where: {
@@ -243,7 +243,7 @@ const deleteCourseById = async (id) => {
 
 //* For Selecting the unique Profile by UserId
 
-const selectProfileByUserId = async (id) => {
+exports.selectProfileByUserId = async (id) => {
 	try {
 		const profile = await prisma.profile.findUnique({
 			where: {
@@ -258,7 +258,7 @@ const selectProfileByUserId = async (id) => {
 
 //* For Selecting the unique Location by ProfileId
 
-const selectLocationByProfileId = async (id) => {
+exports.selectLocationByProfileId = async (id) => {
 	try {
 		const location = await prisma.location.findUnique({
 			where: {
@@ -273,7 +273,7 @@ const selectLocationByProfileId = async (id) => {
 
 //* For Selecting the unique Location by UserId
 
-const selectLocationByUserId = async (id) => {
+exports.selectLocationByUserId = async (id) => {
 	try {
 		const location = await prisma.location.findUnique({
 			where: {
@@ -288,7 +288,7 @@ const selectLocationByUserId = async (id) => {
 
 //* For Selecting the set of Courses by ProfileId
 
-const selectCoursesByProfileId = async (id) => {
+exports.selectCoursesByProfileId = async (id) => {
 	try {
 		const course = await prisma.course.findMany({
 			where: {
