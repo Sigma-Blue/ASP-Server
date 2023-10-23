@@ -25,6 +25,7 @@ exports.isUserExist = async (req, res, next) => {
 	}
 
 	req.body.id = selectedUser.id;
+	req.body.emailId = selectedUser.emailId;
 
 	next();
 };

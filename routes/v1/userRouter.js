@@ -10,6 +10,8 @@ router.route('/login').post(userController.loginUser);
 
 router
 	.route('/resetPassword/:userName')
+	.get(userMiddleware.isUserExist, userController.sendOTP)
+	.post(userController.verifyOTP)
 	.patch(userMiddleware.isUserExist, userController.resetPassword);
 
 module.exports = router;
