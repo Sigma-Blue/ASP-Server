@@ -160,6 +160,7 @@ exports.selectUserInfoByUserName = async (userName) => {
 			select: {
 				id: true,
 				passwordHashed: true,
+				emailId: true,
 			},
 		});
 		return { result: user, error: null };

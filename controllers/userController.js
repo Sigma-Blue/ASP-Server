@@ -1,36 +1,6 @@
 const userModel = require('./../models/userModel');
-
-// Middlewares :
-
-//	@desc		Check whether the user exists => if exists then call next()
-//	@body		password
-
-exports.isUserExist = async (req, res, next) => {
-	const userName = req.params.userName;
-
-	const { result: selectedUser, error: selectedErr } =
-		await userModel.selectUserInfoByUserName(userName);
-
-	if (selectedErr) {
-		return res.status(500).json({
-			status: 'Failure: SelectedErr ',
-			message: `Internal Server Error : ${selectedErr}`,
-		});
-	}
-
-	if (!selectedUser) {
-		return res.status(404).json({
-			status: 'Failure: SelectedUser',
-			message: `User: ${userName} does not exist`,
-		});
-	}
-
-	req.body.id = selectedUser.id;
-
-	next();
-};
-
-// Controllers :
+const hashUtil = require('../utils/hashUtil');
+const emailUtil = require('../utils/emailUtil');
 
 //	@route	POST	/register
 //	@desc		Register New User
@@ -56,16 +26,28 @@ exports.registerUser = async (req, res) => {
 		});
 	}
 
+	const passwordHashed = hashUtil.hashPassword(password);
+
 	const { result: createdUser, error: createdErr } = await userModel.createUser(
 		userName,
 		email,
-		password
+		passwordHashed
 	);
 
 	if (createdErr) {
 		return res.status(500).json({
 			status: 'Failure: CreatedErr',
 			message: `Internal Server Error : ${createdErr}`,
+		});
+	}
+
+	const { result: registeredMail, error: registeredErr } =
+		emailUtil.registrationMailer(email, userName);
+
+	if (registeredErr) {
+		return res.status(500).json({
+			status: 'Failure: registeredMail',
+			message: `Internal Server Error : ${registeredErr}`,
 		});
 	}
 
@@ -100,7 +82,10 @@ exports.loginUser = async (req, res) => {
 		});
 	}
 
-	const isMatch = password === selectedUser.passwordHashed;
+	const isMatch = hashUtil.verifyPassword(
+		password,
+		selectedUser.passwordHashed
+	);
 
 	if (!isMatch) {
 		return res.status(401).json({
@@ -124,8 +109,10 @@ exports.resetPassword = async (req, res) => {
 
 	// get email of the user and send otp
 
+	const passwordHashed = hashUtil.hashPassword(password);
+
 	const { result: updatedUser, error: updatedErr } =
-		await userModel.updatePasswordById(id, password);
+		await userModel.updatePasswordById(id, passwordHashed);
 
 	if (updatedErr) {
 		return res.status(500).json({
@@ -138,5 +125,45 @@ exports.resetPassword = async (req, res) => {
 	return res.status(200).json({
 		status: 'Success ',
 		message: `User : ${updatedUser.userName} Reset the Password`,
+	});
+};
+
+OTP = 123;
+
+exports.sendOTP = async (req, res) => {
+	const userName = req.params.userName;
+	const { emailId } = req.body;
+
+	const { result: resetPasswordMail, error: resetPasswordErr } =
+		emailUtil.resetPasswordMailer(emailId, userName, OTP);
+
+	if (resetPasswordErr) {
+		return res.status(500).json({
+			status: 'Failure: resetPasswordMail',
+			message: `Internal Server Error : ${resetPasswordErr}`,
+		});
+	}
+
+	return res.status(200).json({
+		status: 'Success ',
+		message: `OTP send to the user email`,
+	});
+};
+
+exports.verifyOTP = async (req, res) => {
+	const { otp } = req.body;
+
+	const isMatch = otp === global.OTP;
+
+	if (!isMatch) {
+		return res.status(401).json({
+			status: 'Failure: isMatch',
+			message: 'OTP entered is wrong ',
+		});
+	}
+
+	return res.status(200).json({
+		status: 'Success ',
+		message: `OTP entered is correct`,
 	});
 };
