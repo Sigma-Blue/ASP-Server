@@ -4,20 +4,19 @@ const prisma = require('../prisma/prisma');
 
 //* For creating a new user
 
-exports.createUser = async (userName, email, password, role) => {
+exports.createUser = async (userName, email, password) => {
 	try {
 		const user = await prisma.user.create({
 			data: {
-				userName,
-				email,
+				userName: userName,
+				emailId: email,
 				passwordHashed: password,
-				role,
 			},
 		});
 
 		return { result: user, error: null };
 	} catch (err) {
-		return { result: null, error: err.message };
+		return { result: null, error: err };
 	}
 };
 
@@ -116,6 +115,39 @@ exports.deleteUserFollowsByFromId = async (id) => {
 };
 
 //TODO: READING:
+
+//* For Selecting the User by email Id
+
+exports.selectUserInfoByEmailId = async (email) => {
+	try {
+		const user = await prisma.user.findUnique({
+			where: {
+				emailId: email,
+			},
+		});
+		return { result: user, error: null };
+	} catch (err) {
+		return { result: null, error: err.message };
+	}
+};
+
+//* For Selecting the unique UserID by UserName
+
+exports.selectUserIdByUserName = async (userName) => {
+	try {
+		const user = await prisma.user.findUnique({
+			where: {
+				userName: userName,
+			},
+			select: {
+				id: true,
+			},
+		});
+		return { result: user, error: null };
+	} catch (err) {
+		return { result: null, error: err.message };
+	}
+};
 
 //* For Selecting the unique UserID and Password by UserName
 

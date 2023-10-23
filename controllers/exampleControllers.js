@@ -17,6 +17,7 @@
     404 -> Activity not found
     401 -> Unauthorized
     201 -> Successfully created new activity
+    400 -> Already Exists
  
    Model ViewLayer Controller Architecture
 
