@@ -1,6 +1,7 @@
 const userModel = require('./../models/userModel');
 const hashUserPassword = require('../services/hashUserPassword');
 const emailUtil = require('../utils/emailUtil');
+const jwtTokenAuthorization = require('./../services/jwtTokenAuthorization');
 
 //	@route	POST	/register
 //	@desc		Register New User
@@ -51,9 +52,16 @@ exports.registerUser = async (req, res) => {
 		});
 	}
 
+	const token = jwtTokenAuthorization.createToken(
+		createdUser.id,
+		userName,
+		email
+	);
+
 	console.log(createdUser);
 	return res.status(201).json({
 		status: 'Success',
+		token,
 		message: `Successfully Registered the User : ${userName}`,
 	});
 };
@@ -94,8 +102,15 @@ exports.loginUser = async (req, res) => {
 		});
 	}
 
+	const token = jwtTokenAuthorization.createToken(
+		selectedUser.id,
+		userName,
+		selectedUser.emailId
+	);
+
 	return res.status(200).json({
 		status: 'Success ',
+		token,
 		message: `User : ${userName} authorized to login`,
 	});
 };
