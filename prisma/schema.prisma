@@ -17,7 +17,6 @@ model User {
   role               role          @default(BASIC)
   commentBy          Comment[]     @relation("commentedBy")
   commentOn          Comment[]     @relation("commentedOn")
-  course             Course[]
   location           Location?
   post               Post[]
   profile            Profile?
@@ -109,9 +108,7 @@ model Course {
   instituteLocation String
   isRemote          Boolean
   profileId         String
-  userId            String
   belongsTo         Profile  @relation(fields: [profileId], references: [id])
-  relatedTo         User     @relation(fields: [userId], references: [id])
 }
 
 model About {
