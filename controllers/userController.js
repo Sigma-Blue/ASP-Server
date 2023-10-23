@@ -1,6 +1,7 @@
 const userModel = require('./../models/userModel');
-const hashUtil = require('../utils/hashUtil');
+const hashUserPassword = require('../services/hashUserPassword');
 const emailUtil = require('../utils/emailUtil');
+const jwtTokenAuthorization = require('./../services/jwtTokenAuthorization');
 
 //	@route	POST	/register
 //	@desc		Register New User
@@ -26,7 +27,7 @@ exports.registerUser = async (req, res) => {
 		});
 	}
 
-	const passwordHashed = hashUtil.hashPassword(password);
+	const passwordHashed = hashUserPassword.hashPassword(password);
 
 	const { result: createdUser, error: createdErr } = await userModel.createUser(
 		userName,
@@ -51,9 +52,16 @@ exports.registerUser = async (req, res) => {
 		});
 	}
 
+	const token = jwtTokenAuthorization.createToken(
+		createdUser.id,
+		userName,
+		email
+	);
+
 	console.log(createdUser);
 	return res.status(201).json({
 		status: 'Success',
+		token,
 		message: `Successfully Registered the User : ${userName}`,
 	});
 };
@@ -82,7 +90,7 @@ exports.loginUser = async (req, res) => {
 		});
 	}
 
-	const isMatch = hashUtil.verifyPassword(
+	const isMatch = hashUserPassword.verifyPassword(
 		password,
 		selectedUser.passwordHashed
 	);
@@ -94,8 +102,15 @@ exports.loginUser = async (req, res) => {
 		});
 	}
 
+	const token = jwtTokenAuthorization.createToken(
+		selectedUser.id,
+		userName,
+		selectedUser.emailId
+	);
+
 	return res.status(200).json({
 		status: 'Success ',
+		token,
 		message: `User : ${userName} authorized to login`,
 	});
 };
@@ -109,7 +124,7 @@ exports.resetPassword = async (req, res) => {
 
 	// get email of the user and send otp
 
-	const passwordHashed = hashUtil.hashPassword(password);
+	const passwordHashed = hashUserPassword.hashPassword(password);
 
 	const { result: updatedUser, error: updatedErr } =
 		await userModel.updatePasswordById(id, passwordHashed);
