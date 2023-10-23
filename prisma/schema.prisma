@@ -10,7 +10,7 @@ datasource db {
 model User {
   id                 String        @id @default(uuid())
   userName           String        @unique
-  email              String        @unique
+  emailId            String        @unique
   passwordHashed     String
   registeredAt       DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
@@ -27,7 +27,7 @@ model User {
   fromUserFollowship UserFollows[] @relation("fromUser")
   toUserFollowship   UserFollows[] @relation("toUser")
 
-  @@index([email, userName])
+  @@index([emailId, userName])
 }
 
 model UserFollows {

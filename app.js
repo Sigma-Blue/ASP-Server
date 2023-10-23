@@ -3,6 +3,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 
 const exampleRouter = require('./routes/v1/exampleRouter');
+const userRouter = require('./routes/v1/userRouter');
 
 const app = express();
 
@@ -18,6 +19,7 @@ if (process.env.NODE_ENV == 'development') {
 
 app.use((req, res, next) => {
 	console.log('Hello from the middleware 👋');
+	console.log(req.body);
 	next();
 });
 
@@ -36,5 +38,6 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/api/v1/example', exampleRouter);
+app.use('/api/v1/user', userRouter);
 
 module.exports = app;

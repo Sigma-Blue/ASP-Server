@@ -4,8 +4,8 @@
 	"description": "Developing express backend application with PostgreSQL and Prisma ORM for Mobile Application",
 	"main": "index.js",
 	"scripts": {
-		"dev": "cross-env NODE_ENV=development nodemon index.js",
-		"staging": "cross-env NODE_ENV=staging node index.js",
+		"dev": "cross-env NODE_ENV=development nodemon server.js",
+		"staging": "cross-env NODE_ENV=staging node server.js",
 		"db-pull": "dotenv -e .env.development -- npx prisma db pull ",
 		"db-push": "dotenv -e .env.development -- npx prisma db push ",
 		"db-pull:staging": "dotenv -e .env.staging -- npx prisma db pull ",
