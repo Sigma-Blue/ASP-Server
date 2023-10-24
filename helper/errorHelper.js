@@ -26,6 +26,7 @@
     401 -> Unauthorized
     201 -> Successfully created new activity
     400 -> Already Exists
+    403 -> Forbidden response : Refused to Access
  
    Model ViewLayer Controller Architecture
 
