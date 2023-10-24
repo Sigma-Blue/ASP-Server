@@ -117,7 +117,7 @@ exports.loginUser = async (req, res) => {
 
 //	@route	PATCH	/resetPassword/:userName
 //	@desc		Reset the Password of Existing User by given userName
-//	@body		password,id
+//	@body		password,id,emailId
 
 exports.resetPassword = async (req, res) => {
 	const { id, password } = req.body;
@@ -145,6 +145,10 @@ exports.resetPassword = async (req, res) => {
 
 OTP = 123;
 
+//	@route	GET	/resetPassword/:userName
+//	@desc		Send OTP to the user mail
+//	@body		password,id,emailId
+
 exports.sendOTP = async (req, res) => {
 	const userName = req.params.userName;
 	const { emailId } = req.body;
@@ -164,6 +168,10 @@ exports.sendOTP = async (req, res) => {
 		message: `OTP send to the user email`,
 	});
 };
+
+//	@route	POST	/resetPassword/:userName
+//	@desc		Verify the user entered OTP with the generated OTP
+//	@body		otp
 
 exports.verifyOTP = async (req, res) => {
 	const { otp } = req.body;

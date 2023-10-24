@@ -1,15 +1,23 @@
-// TODO: Declare your controllers here
-
 /*** 
  
  // ERROR HANDLER :
     
-    if(error){
-        return res.status(#code).json{
-          message: #error_msg
-          error : error.message
+    if(#error){
+        return res
+          .status(#code)
+          .json{
+            result: Success/Failure : #reason 
+            error : #error.message
         }
     }
+
+    if (#error) {
+		return res
+        .status(#code)
+        .json({
+			  status: 'Failure: #error ',
+			  message: `#error_msg : ${#error}`,
+		});
 
     #code & #error_msg :
     500 -> Internal Server Error
