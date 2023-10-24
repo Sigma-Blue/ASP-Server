@@ -207,6 +207,13 @@ model Save {
   userSavedOn   User     @relation("savedOn", fields: [savedOnId], references: [id])
 }
 
+model PasswordReset {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  createdAt DateTime @default(now())
+  expiresIn String
+}
+
 enum role {
   BASIC
   ADMIN

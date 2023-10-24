@@ -122,8 +122,6 @@ exports.loginUser = async (req, res) => {
 exports.resetPassword = async (req, res) => {
 	const { id, password } = req.body;
 
-	// get email of the user and send otp
-
 	const passwordHashed = hashUserPassword.hashPassword(password);
 
 	const { result: updatedUser, error: updatedErr } =
@@ -143,18 +141,16 @@ exports.resetPassword = async (req, res) => {
 	});
 };
 
-OTP = 123;
-
 //	@route	GET	/resetPassword/:userName
 //	@desc		Send OTP to the user mail
 //	@body		password,id,emailId
 
 exports.sendOTP = async (req, res) => {
 	const userName = req.params.userName;
-	const { emailId } = req.body;
+	const { emailId, otpToken } = req.body;
 
 	const { result: resetPasswordMail, error: resetPasswordErr } =
-		emailUtil.resetPasswordMailer(emailId, userName, OTP);
+		emailUtil.resetPasswordMailer(emailId, userName, otpToken);
 
 	if (resetPasswordErr) {
 		return res.status(500).json({
@@ -174,19 +170,35 @@ exports.sendOTP = async (req, res) => {
 //	@body		otp
 
 exports.verifyOTP = async (req, res) => {
-	const { otp } = req.body;
+	const { otpToken } = req.body;
 
-	const isMatch = otp === global.OTP;
+	const { result: selectedOtpToken, error: selectedErr } =
+		await userModel.selectPasswordResetInfoByToken(otpToken);
 
-	if (!isMatch) {
-		return res.status(401).json({
-			status: 'Failure: isMatch',
-			message: 'OTP entered is wrong ',
+	if (selectedErr) {
+		return res.status(500).json({
+			status: 'Failure: SelectedErr ',
+			message: `Internal Server Error : ${selectedErr}`,
+		});
+	}
+
+	console.log(selectedOtpToken);
+	if (!selectedOtpToken) {
+		return res.status(404).json({
+			status: 'Failure: SelectedOtpToken',
+			message: `OTP Token: ${otpToken} does not exist`,
+		});
+	}
+
+	if (selectedOtpToken.expiresIn < new Date().toISOString()) {
+		return res.status(403).json({
+			status: 'Failure: SelectedOtpToken expiresIn ',
+			message: `Forbidden response : OTP Token Expired `,
 		});
 	}
 
 	return res.status(200).json({
 		status: 'Success ',
-		message: `OTP entered is correct`,
+		message: `OTP Token entered is correct`,
 	});
 };
