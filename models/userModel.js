@@ -41,6 +41,22 @@ exports.createUserFollows = async (isAccepted, fromUserId, toUserId) => {
 	}
 };
 
+//* For creating Password Reset  Token
+
+exports.createPasswordResetToken = async (token, expiresIn) => {
+	try {
+		const passwordReset = await prisma.passwordReset.create({
+			data: {
+				token: token,
+				expiresIn: expiresIn,
+			},
+		});
+		return { result: passwordReset, error: null };
+	} catch (err) {
+		return { result: null, error: err.message };
+	}
+};
+
 //TODO: UPDATING:
 
 //* For updating new Password to the user
@@ -106,6 +122,23 @@ exports.deleteUserFollowsByFromId = async (id) => {
 		const userFollows = await prisma.userFollows.deleteMany({
 			where: {
 				fromUserId: id,
+			},
+		});
+		return { result: null, error: null };
+	} catch (err) {
+		return { result: null, error: err.message };
+	}
+};
+
+//* For deleting OTP Token in Password Reset By Token
+
+exports.deleteOtpTokenWithDate = async () => {
+	try {
+		const passwordReset = await prisma.passwordReset.deleteMany({
+			where: {
+				expiresIn: {
+					lte: new Date().toISOString(),
+				},
 			},
 		});
 		return { result: null, error: null };
@@ -204,6 +237,8 @@ exports.selectUserFollowsByFromId = async (id) => {
 	}
 };
 
+//* For Selecting the Followers by To User Id
+
 exports.selectUserFollowsByToId = async (id) => {
 	try {
 		const user = await prisma.userFollows.findMany({
@@ -217,6 +252,24 @@ exports.selectUserFollowsByToId = async (id) => {
 			},
 		});
 		return { result: user, error: null };
+	} catch (err) {
+		return { result: null, error: err.message };
+	}
+};
+
+//* For Selecting the Password Reset Info By Token
+
+exports.selectPasswordResetInfoByToken = async (token) => {
+	try {
+		const passwordReset = await prisma.passwordReset.findUnique({
+			where: {
+				token: token,
+			},
+			select: {
+				expiresIn: true,
+			},
+		});
+		return { result: passwordReset, error: null };
 	} catch (err) {
 		return { result: null, error: err.message };
 	}
