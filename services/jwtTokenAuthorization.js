@@ -15,7 +15,7 @@ exports.createToken = (id, userName, email) => {
 exports.verifyToken = (token) => {
 	let isVerified;
 	try {
-		decoded = jwt.verify(token, process.env.JWT_SECRET);
+		isVerified = jwt.verify(token, process.env.JWT_SECRET);
 	} catch (err) {
 		return { result: null, error: err };
 	}
