@@ -42,27 +42,10 @@ exports.registerUser = async (req, res) => {
 		});
 	}
 
-	const { result: registeredMail, error: registeredErr } =
-		emailUtil.registrationMailer(email, userName);
-
-	if (registeredErr) {
-		return res.status(500).json({
-			status: 'Failure: registeredMail',
-			message: `Internal Server Error : ${registeredErr}`,
-		});
-	}
-
-	const token = jwtTokenAuthorization.createToken(
-		createdUser.id,
-		userName,
-		email
-	);
-
 	console.log(createdUser);
 	return res.status(201).json({
 		status: 'Success',
-		token,
-		message: `Successfully Registered the User : ${userName}`,
+		message: `Successfully Saved the User details : ${userName}`,
 	});
 };
 
@@ -75,20 +58,6 @@ exports.loginUser = async (req, res) => {
 
 	const { result: selectedUser, error: selectedErr } =
 		await userModel.selectUserInfoByUserName(userName);
-
-	if (selectedErr) {
-		return res.status(500).json({
-			status: 'Failure: SelectedErr ',
-			message: `Internal Server Error : ${selectedErr}`,
-		});
-	}
-
-	if (!selectedUser) {
-		return res.status(404).json({
-			status: 'Failure: SelectedUser',
-			message: `User: ${userName} does not exist`,
-		});
-	}
 
 	const isMatch = hashUserPassword.verifyPassword(
 		password,
@@ -145,6 +114,39 @@ exports.resetPassword = async (req, res) => {
 //	@desc		Send OTP to the user mail
 //	@body		password,id,emailId
 
+exports.sendRegisteredMail = async (req, res) => {
+	const userName = req.params.userName;
+
+	const { result: selectedUser, error: selectedErr } =
+		await userModel.selectUserInfoByUserName(userName);
+
+	if (selectedErr) {
+		return res.status(500).json({
+			status: 'Failure: SelectedErr ',
+			message: `Internal Server Error : ${selectedErr}`,
+		});
+	}
+
+	const { result: registeredMail, error: registeredErr } =
+		emailUtil.registrationMailer(selectedUser.emailId, userName);
+
+	if (registeredErr) {
+		return res.status(500).json({
+			status: 'Failure: registeredMail',
+			message: `Internal Server Error : ${registeredErr}`,
+		});
+	}
+
+	return res.status(200).json({
+		status: 'Success ',
+		message: `Send mail to the registered user`,
+	});
+};
+
+//	@route	GET	/resetPassword/:userName
+//	@desc		Send OTP to the user mail
+//	@body		password,id,emailId
+
 exports.sendOTP = async (req, res) => {
 	const userName = req.params.userName;
 	const { emailId, otpToken } = req.body;
@@ -170,6 +172,7 @@ exports.sendOTP = async (req, res) => {
 //	@body		otp
 
 exports.verifyOTP = async (req, res) => {
+	const userName = req.params.userName;
 	const { otpToken } = req.body;
 
 	const { result: selectedOtpToken, error: selectedErr } =
@@ -194,6 +197,16 @@ exports.verifyOTP = async (req, res) => {
 		return res.status(403).json({
 			status: 'Failure: SelectedOtpToken expiresIn ',
 			message: `Forbidden response : OTP Token Expired `,
+		});
+	}
+
+	const { result: updatedIsVerified, error: updatedErr } =
+		await userModel.updateIsVerifiedByUserName(userName);
+
+	if (updatedErr) {
+		return res.status(500).json({
+			status: 'Failure: updatedErr ',
+			message: `Internal Server Error : ${updatedErr}`,
 		});
 	}
 

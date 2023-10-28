@@ -12,6 +12,7 @@ model User {
   userName           String        @unique
   emailId            String        @unique
   passwordHashed     String
+  isVerified         Boolean       @default(false)
   registeredAt       DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
   role               role          @default(BASIC)

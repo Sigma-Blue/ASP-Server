@@ -5,14 +5,16 @@ const userModel = require('./../models/userModel');
 //	@body		password
 
 exports.isUserNameExist = async (req, res, next) => {
-	const userName = req.params.userName;
-
+	let userName = req.params.userName;
+	if (!userName) {
+		userName = req.body.userName;
+	}
 	const { result: selectedUser, error: selectedErr } =
 		await userModel.selectUserInfoByUserName(userName);
 
 	if (selectedErr) {
 		return res.status(500).json({
-			status: 'Failure: SelectedErr ',
+			status: 'Failure: SelectedIsUserNameExistErr ',
 			message: `Internal Server Error : ${selectedErr}`,
 		});
 	}
@@ -51,6 +53,33 @@ exports.isUserIdExist = async (req, res, next) => {
 		return res.status(404).json({
 			status: 'Failure: SelectedUser',
 			message: `User: ${userName} does not exist`,
+		});
+	}
+
+	next();
+};
+
+//	@route
+//	@desc		Check whether the user is Verified  => if exists then call next()
+//	@body		tokenId
+
+exports.isUserVerified = async (req, res, next) => {
+	const userName = req.body.userName;
+
+	const { result: selectedIsVerified, error: selectedErr } =
+		await userModel.selectIsVerifiedByUserName(userName);
+
+	if (selectedErr) {
+		return res.status(500).json({
+			status: 'Failure: SelectedIsVerifiedErr ',
+			message: `Internal Server Error : ${selectedErr}`,
+		});
+	}
+
+	if (!selectedIsVerified.isVerified) {
+		return res.status(401).json({
+			status: 'Failure: isVerified',
+			message: `Unauthorized : user is not yet verified`,
 		});
 	}
 

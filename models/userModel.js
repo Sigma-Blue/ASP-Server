@@ -113,6 +113,24 @@ exports.updateUserFollowsByFromId = async (id) => {
 	}
 };
 
+//* For updating isVerified by userName
+
+exports.updateIsVerifiedByUserName = async (userName) => {
+	try {
+		const user = await prisma.user.update({
+			where: {
+				userName: userName,
+			},
+			data: {
+				isVerified: true,
+			},
+		});
+		return { result: user, error: null };
+	} catch (err) {
+		return { result: null, error: err.message };
+	}
+};
+
 //TODO: DELETING:
 
 //* For deleting user following by FromUserId
@@ -270,6 +288,24 @@ exports.selectPasswordResetInfoByToken = async (token) => {
 			},
 		});
 		return { result: passwordReset, error: null };
+	} catch (err) {
+		return { result: null, error: err.message };
+	}
+};
+
+//* For Selecting the isVerified  by userName
+
+exports.selectIsVerifiedByUserName = async (userName) => {
+	try {
+		const user = await prisma.user.findUnique({
+			where: {
+				userName: userName,
+			},
+			select: {
+				isVerified: true,
+			},
+		});
+		return { result: user, error: null };
 	} catch (err) {
 		return { result: null, error: err.message };
 	}
