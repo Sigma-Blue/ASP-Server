@@ -28,15 +28,15 @@ router
 	);
 
 router
-	.route('/resetPassword/:userName')
+	.route('/forgetPassword/:email')
 	.get(
-		userMiddleware.isUserNameExist,
+		userMiddleware.isUserEmailIdExist,
 		otpMiddleware.generateOtpToken,
 		userController.sendOTP
 	)
 	.post(userController.verifyOTP)
 	.patch(
-		userMiddleware.isUserNameExist,
+		userMiddleware.isUserEmailIdExist,
 		otpMiddleware.removeOtpToken,
 		userController.resetPassword
 	);
