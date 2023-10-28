@@ -8,7 +8,24 @@ const otpMiddleware = require('./../../middlewares/otpMiddleware');
 
 router.route('/register').post(userController.registerUser);
 
-router.route('/login').post(userController.loginUser);
+router.route('/register/:userName').get(userController.sendRegisteredMail);
+
+router
+	.route('/register/otp/:userName')
+	.get(
+		userMiddleware.isUserNameExist,
+		otpMiddleware.generateOtpToken,
+		userController.sendOTP
+	)
+	.post(userController.verifyOTP);
+
+router
+	.route('/login')
+	.post(
+		userMiddleware.isUserNameExist,
+		userMiddleware.isUserVerified,
+		userController.loginUser
+	);
 
 router
 	.route('/resetPassword/:userName')
