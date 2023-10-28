@@ -32,6 +32,36 @@ exports.isUserNameExist = async (req, res, next) => {
 	next();
 };
 
+//	@route	PATCH	/resetPassword/:userName
+//	@desc		Check whether the user emailId exists => if exists then call next()
+//	@body		password
+
+exports.isUserEmailIdExist = async (req, res, next) => {
+	let emailId = req.params.email;
+
+	const { result: selectedEmail, error: selectedErr } =
+		await userModel.selectUserInfoByEmailId(emailId);
+
+	if (selectedErr) {
+		return res.status(500).json({
+			status: 'Failure: SelectedIsUserEmailIdExistErr ',
+			message: `Internal Server Error : ${selectedErr}`,
+		});
+	}
+
+	if (!selectedEmail) {
+		return res.status(404).json({
+			status: 'Failure: SelectedUser',
+			message: `User: ${emailId} does not exist`,
+		});
+	}
+
+	req.body.id = selectedEmail.id;
+	req.body.Name = selectedEmail.userName;
+
+	next();
+};
+
 //	@route
 //	@desc		Check whether the tokenId (i.e userId) exists => if exists then call next()
 //	@body		tokenId

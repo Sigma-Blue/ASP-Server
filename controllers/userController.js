@@ -111,7 +111,7 @@ exports.resetPassword = async (req, res) => {
 };
 
 //	@route	GET	/resetPassword/:userName
-//	@desc		Send OTP to the user mail
+//	@desc		Send Registered Mail to the user mail
 //	@body		password,id,emailId
 
 exports.sendRegisteredMail = async (req, res) => {
@@ -148,8 +148,19 @@ exports.sendRegisteredMail = async (req, res) => {
 //	@body		password,id,emailId
 
 exports.sendOTP = async (req, res) => {
-	const userName = req.params.userName;
-	const { emailId, otpToken } = req.body;
+	const otpToken = req.body.otpToken;
+
+	let userName = req.params.userName;
+	let emailId = req.body.email;
+
+	if (!userName) {
+		userName = req.body.userName;
+	}
+	if (!emailId) {
+		emailId = req.params.email;
+	}
+
+	console.log(emailId);
 
 	const { result: resetPasswordMail, error: resetPasswordErr } =
 		emailUtil.resetPasswordMailer(emailId, userName, otpToken);
@@ -172,8 +183,19 @@ exports.sendOTP = async (req, res) => {
 //	@body		otp
 
 exports.verifyOTP = async (req, res) => {
-	const userName = req.params.userName;
-	const { otpToken } = req.body;
+	let userName = req.params.userName;
+
+	const otpToken = req.body.otpToken;
+
+	if (!userName) {
+		email = req.params.email;
+		const { result: selectedEmail, error: selectedErr } =
+			await userModel.selectUserInfoByEmailId(email);
+
+		userName = selectedEmail.userName;
+	}
+
+	console.log(userName);
 
 	const { result: selectedOtpToken, error: selectedErr } =
 		await userModel.selectPasswordResetInfoByToken(otpToken);
