@@ -1,7 +1,8 @@
 /*** 
  
  // ERROR HANDLER :
-    
+  
+    //* For Models and services:
     if(#error){
         return res
           .status(#code)
@@ -11,6 +12,7 @@
         }
     }
 
+    //* For controllers:
     if (#error) {
 		return res
         .status(#code)
