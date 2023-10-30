@@ -103,6 +103,7 @@ exports.loginUser = async (req, res) => {
 exports.resetPassword = async (req, res) => {
 	const { id, password } = req.body;
 
+	// Create and inset the hashed password from the user entered password
 	const passwordHashed = hashUserPassword.hashPassword(password);
 
 	const { result: updatedUser, error: updatedErr } =
@@ -129,6 +130,8 @@ exports.resetPassword = async (req, res) => {
 exports.sendRegisteredMail = async (req, res) => {
 	const userName = req.params.userName;
 
+	// Select the email address of the respective user
+
 	const { result: selectedUser, error: selectedErr } =
 		await userModel.selectUserInfoByUserName(userName);
 
@@ -138,6 +141,8 @@ exports.sendRegisteredMail = async (req, res) => {
 			message: `Internal Server Error : ${selectedErr}`,
 		});
 	}
+
+	// Send the registration email to the user
 
 	const { result: registeredMail, error: registeredErr } =
 		emailUtil.registrationMailer(selectedUser.emailId, userName);
@@ -162,6 +167,8 @@ exports.sendRegisteredMail = async (req, res) => {
 exports.sendOTP = async (req, res) => {
 	const otpToken = req.body.otpToken;
 
+	// Get the userName and emailId from the possible ways
+
 	let userName = req.params.userName;
 	let emailId = req.body.emailId;
 
@@ -172,8 +179,7 @@ exports.sendOTP = async (req, res) => {
 		emailId = req.params.email;
 	}
 
-	console.log('email', emailId);
-
+	// Send the OTP to the user email
 	const { result: resetPasswordMail, error: resetPasswordErr } =
 		emailUtil.resetPasswordMailer(emailId, userName, otpToken);
 
@@ -195,19 +201,39 @@ exports.sendOTP = async (req, res) => {
 //	@body		otp
 
 exports.verifyOTP = async (req, res) => {
-	let userName = req.params.userName;
-
 	const otpToken = req.body.otpToken;
 
+	// Get the userName and email of the user from possible ways
+	let userName = req.params.userName;
+	let email = req.params.email;
+
 	if (!userName) {
-		email = req.params.email;
-		const { result: selectedEmail, error: selectedErr } =
+		const { result: selectedEmail, error: selectedEmailErr } =
 			await userModel.selectUserInfoByEmailId(email);
 
+		if (!selectedEmail) {
+			return res.status(404).json({
+				status: 'Failure: SelectedOtpToken',
+				message: `Given Email: ${email} does not exist`,
+			});
+		}
 		userName = selectedEmail.userName;
 	}
 
-	console.log(userName);
+	if (!email) {
+		const { result: selectedUserName, error: selectedUserErr } =
+			await userModel.selectUserInfoByUserName(userName);
+
+		if (!selectedUserName) {
+			return res.status(404).json({
+				status: 'Failure: SelectedOtpToken',
+				message: `Given UserName: ${userName} does not exist`,
+			});
+		}
+		email = selectedUserName.emailId;
+	}
+
+	// Select and Check the Validity of the OTP and emailId of the user
 
 	const { result: selectedOtpToken, error: selectedErr } =
 		await userModel.selectPasswordResetInfoByToken(otpToken);
@@ -219,7 +245,6 @@ exports.verifyOTP = async (req, res) => {
 		});
 	}
 
-	console.log(selectedOtpToken);
 	if (!selectedOtpToken) {
 		return res.status(404).json({
 			status: 'Failure: SelectedOtpToken',
@@ -227,12 +252,35 @@ exports.verifyOTP = async (req, res) => {
 		});
 	}
 
+	if (selectedOtpToken.emailId !== email) {
+		return res.status(401).json({
+			status: 'Failure: SelectedOtpTokenEmail',
+			message: `Given Email Id given is not valid`,
+		});
+	}
+
+	// Delete the expired records from db
+
+	const { result: deletedOtp, error: deletedErr } =
+		await userModel.deleteOtpTokenWithDate(email);
+
+	if (deletedErr) {
+		return res.status(500).json({
+			status: 'Failure: deletedErr ',
+			message: `Internal Server Error : ${deletedErr}`,
+		});
+	}
+
+	// Verify the validity of the respective OtpToken
+
 	if (selectedOtpToken.expiresIn < new Date().toISOString()) {
 		return res.status(403).json({
 			status: 'Failure: SelectedOtpToken expiresIn ',
 			message: `Forbidden response : OTP Token Expired `,
 		});
 	}
+
+	// Update the verification in the user db
 
 	const { result: updatedIsVerified, error: updatedErr } =
 		await userModel.updateIsVerifiedByUserName(userName);

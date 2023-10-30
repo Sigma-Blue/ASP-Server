@@ -43,12 +43,13 @@ exports.createUserFollows = async (isAccepted, fromUserId, toUserId) => {
 
 //* For creating Password Reset  Token
 
-exports.createPasswordResetToken = async (token, expiresIn) => {
+exports.createPasswordResetToken = async (token, expiresIn, emailId) => {
 	try {
 		const passwordReset = await prisma.passwordReset.create({
 			data: {
 				token: token,
 				expiresIn: expiresIn,
+				emailId: emailId,
 			},
 		});
 		return { result: passwordReset, error: null };
@@ -285,6 +286,7 @@ exports.selectPasswordResetInfoByToken = async (token) => {
 			},
 			select: {
 				expiresIn: true,
+				emailId: true,
 			},
 		});
 		return { result: passwordReset, error: null };

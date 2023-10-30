@@ -6,12 +6,25 @@ const moment = require('moment');
 //	@desc		Generate an Otp token using otpGeneration service and store in db
 
 exports.generateOtpToken = async (req, res, next) => {
+	// Generate OTP  and expire date :
 	const otpToken = await otpGeneration.createOtpToken();
 	const expiresIn = moment(new Date()).add(5, 'minutes').toISOString();
 
-	console.log(expiresIn);
+	// Get the email in possible ways
+
+	let email = req.params.email;
+
+	if (!email) {
+		const userName = req.params.userName;
+		const { result: selectedUserName, error: selectedUserErr } =
+			await userModel.selectUserInfoByUserName(userName);
+		email = selectedUserName.emailId;
+	}
+
+	// Store the OtpToken , expireIn and email in db
+
 	const { result: createdToken, error: createdErr } =
-		await userModel.createPasswordResetToken(otpToken, expiresIn);
+		await userModel.createPasswordResetToken(otpToken, expiresIn, email);
 
 	if (createdErr) {
 		return res.status(500).json({
@@ -27,6 +40,7 @@ exports.generateOtpToken = async (req, res, next) => {
 //	@desc		remove the OTP Token in db based on the model condition
 
 exports.removeOtpToken = async (req, res, next) => {
+	// Delete the OtpToken from the db
 	const { result: deletedToken, error: deletedErr } =
 		await userModel.deleteOtpTokenWithDate();
 	if (deletedErr) {
