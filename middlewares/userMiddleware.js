@@ -1,7 +1,7 @@
 const userModel = require('./../models/userModel');
 
 //	@route	PATCH	/resetPassword/:userName
-//	@desc		Check whether the userName exists => if exists then call next()
+//	@desc		Check whether the userName exists => set userId email Id to the req body => next()
 //	@body		password
 
 exports.isUserNameExist = async (req, res, next) => {
@@ -28,12 +28,13 @@ exports.isUserNameExist = async (req, res, next) => {
 
 	req.body.id = selectedUser.id;
 	req.body.emailId = selectedUser.emailId;
+	console.log(selectedUser.emailId);
 
 	next();
 };
 
 //	@route	PATCH	/resetPassword/:userName
-//	@desc		Check whether the user emailId exists => if exists then call next()
+//	@desc		Check whether emailId exists => set userId userName to the req body => next()
 //	@body		password
 
 exports.isUserEmailIdExist = async (req, res, next) => {
@@ -63,7 +64,7 @@ exports.isUserEmailIdExist = async (req, res, next) => {
 };
 
 //	@route
-//	@desc		Check whether the tokenId (i.e userId) exists => if exists then call next()
+//	@desc		Check whether the tokenId (i.e userId) exists => next()
 //	@body		tokenId
 
 exports.isUserIdExist = async (req, res, next) => {
@@ -90,7 +91,7 @@ exports.isUserIdExist = async (req, res, next) => {
 };
 
 //	@route
-//	@desc		Check whether the user is Verified  => if exists then call next()
+//	@desc		Check whether the user is Verified  => next()
 //	@body		tokenId
 
 exports.isUserVerified = async (req, res, next) => {

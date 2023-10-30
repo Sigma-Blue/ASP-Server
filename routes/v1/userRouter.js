@@ -6,6 +6,8 @@ const userMiddleware = require('./../../middlewares/userMiddleware');
 const tokenMiddleware = require('./../../middlewares/tokenMiddleware');
 const otpMiddleware = require('./../../middlewares/otpMiddleware');
 
+// REGISTER :
+
 router.route('/register').post(userController.registerUser);
 
 router.route('/register/:userName').get(userController.sendRegisteredMail);
@@ -19,6 +21,8 @@ router
 	)
 	.post(userController.verifyOTP);
 
+// LOGIN :
+
 router
 	.route('/login')
 	.post(
@@ -26,6 +30,8 @@ router
 		userMiddleware.isUserVerified,
 		userController.loginUser
 	);
+
+// FORGET PASSWORD :
 
 router
 	.route('/forgetPassword/:email')

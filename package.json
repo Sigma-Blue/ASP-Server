@@ -2,7 +2,7 @@
 	"name": "alumni_student_platform_backend",
 	"version": "1.0.0",
 	"description": "Developing express backend application with PostgreSQL and Prisma ORM for Mobile Application",
-	"main": "index.js",
+	"main": "server.js",
 	"scripts": {
 		"dev": "cross-env NODE_ENV=development nodemon server.js",
 		"staging": "cross-env NODE_ENV=staging node server.js",

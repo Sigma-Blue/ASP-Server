@@ -10,6 +10,8 @@ const jwtTokenAuthorization = require('./../services/jwtTokenAuthorization');
 exports.registerUser = async (req, res) => {
 	const { userName, email, password } = req.body;
 
+	// Check whether user already exist
+
 	const { result: selectedUser, error: selectedErr } =
 		await userModel.selectUserInfoByEmailId(email);
 
@@ -27,7 +29,11 @@ exports.registerUser = async (req, res) => {
 		});
 	}
 
+	// Create hashed password
+
 	const passwordHashed = hashUserPassword.hashPassword(password);
+
+	// Create new User
 
 	const { result: createdUser, error: createdErr } = await userModel.createUser(
 		userName,
@@ -56,8 +62,12 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
 	const { userName, password } = req.body;
 
+	// Select the respective User
+
 	const { result: selectedUser, error: selectedErr } =
 		await userModel.selectUserInfoByUserName(userName);
+
+	// Check the authenticity of the Password entered
 
 	const isMatch = hashUserPassword.verifyPassword(
 		password,
@@ -70,6 +80,8 @@ exports.loginUser = async (req, res) => {
 			message: `User: ${userName} unauthorized `,
 		});
 	}
+
+	// Create and Send JWT Token
 
 	const token = jwtTokenAuthorization.createToken(
 		selectedUser.id,
@@ -151,7 +163,7 @@ exports.sendOTP = async (req, res) => {
 	const otpToken = req.body.otpToken;
 
 	let userName = req.params.userName;
-	let emailId = req.body.email;
+	let emailId = req.body.emailId;
 
 	if (!userName) {
 		userName = req.body.userName;
@@ -160,7 +172,7 @@ exports.sendOTP = async (req, res) => {
 		emailId = req.params.email;
 	}
 
-	console.log(emailId);
+	console.log('email', emailId);
 
 	const { result: resetPasswordMail, error: resetPasswordErr } =
 		emailUtil.resetPasswordMailer(emailId, userName, otpToken);
