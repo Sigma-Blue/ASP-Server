@@ -213,6 +213,7 @@ model PasswordReset {
   token     String   @unique
   createdAt DateTime @default(now())
   expiresIn String
+  emailId   String
 }
 
 enum role {
