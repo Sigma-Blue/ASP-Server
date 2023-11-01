@@ -38,8 +38,8 @@ exports.createImage = async (
 	try {
 		const image = await prisma.image.create({
 			data: {
-				isPost,
-				isBanner,
+				isPost: isPost,
+				isBanner: isBanner,
 				imageExtension: imgExt,
 				imageType: imgType,
 				imageValue: imgVal,

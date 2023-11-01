@@ -193,6 +193,7 @@ exports.selectUserIdByUserName = async (userName) => {
 			},
 			select: {
 				id: true,
+				emailId: true,
 			},
 		});
 		return { result: user, error: null };
