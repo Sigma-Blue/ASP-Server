@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["selectRelationCount"]
 }
 
 datasource db {
@@ -13,6 +14,7 @@ model User {
   emailId            String        @unique
   passwordHashed     String
   isVerified         Boolean       @default(false)
+  isSigned           Boolean       @default(false)
   registeredAt       DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
   role               role          @default(BASIC)
@@ -45,9 +47,8 @@ model UserFollows {
 model Profile {
   id             String     @id @default(uuid())
   firstName      String
-  middleName     String
   lastName       String
-  userType       String
+  userType       userType   @default(USER)
   departmentName String
   registerNo     Int        @unique
   birthDate      DateTime
@@ -66,7 +67,7 @@ model Profile {
 }
 
 model Location {
-  id           String  @id @default(uuid())
+  id           String   @id @default(uuid())
   addressLine1 String
   addressLine2 String
   city         String
@@ -75,18 +76,19 @@ model Location {
   postalCode   String
   nationality  String
   contactNo    String
-  profileId    String  @unique @default("NULL")
-  userId       String  @unique @default("NULL")
-  belongsTo    Profile @relation(fields: [profileId], references: [id])
-  relatedTo    User    @relation(fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  profileId    String   @unique @default("NULL")
+  userId       String   @unique @default("NULL")
+  belongsTo    Profile  @relation(fields: [profileId], references: [id])
+  relatedTo    User     @relation(fields: [userId], references: [id])
 }
 
 model Post {
   id              String     @id @default(uuid())
   postDescription String
-  postType        String
+  postType        postType   @default(GENERAL)
   createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
   userId          String
   createdBy       User       @relation(fields: [userId], references: [id])
   about           About?
@@ -108,6 +110,7 @@ model Course {
   instituteName     String
   instituteLocation String
   isRemote          Boolean
+  createdAt         DateTime @default(now())
   profileId         String
   belongsTo         Profile  @relation(fields: [profileId], references: [id])
 }
@@ -125,29 +128,22 @@ model About {
 }
 
 model Image {
-  id               String   @id @default(uuid())
-  isPost           Boolean
-  isBanner         Boolean
-  imageExtension   String
-  imageType        String
-  imageValue       String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id               String    @id @default(uuid())
+  imageType        imageType
+  imageFilePath    String
+  createdAt        DateTime  @default(now())
   postId           String
   profileId        String
-  postBelongsTo    Post     @relation(fields: [postId], references: [id])
-  profileBelongsTo Profile  @relation(fields: [profileId], references: [id])
+  postBelongsTo    Post      @relation(fields: [postId], references: [id])
+  profileBelongsTo Profile   @relation(fields: [profileId], references: [id])
 }
 
 model Document {
   id               String   @id @default(uuid())
-  isPost           Boolean
-  docExtention     String
-  docType          String
-  docTitle         String
-  docValue         String
+  docExtention     extType
+  docType          docType
+  docFilePath      String
   createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
   postId           String
   profileId        String
   postBelongsTo    Post     @relation(fields: [postId], references: [id])
@@ -156,11 +152,10 @@ model Document {
 
 model Link {
   id               String   @id @default(uuid())
-  isPost           Boolean
+  linkType         linkType
   linkName         String
   linkUrl          String
   createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
   postId           String
   profileId        String
   postBelongsTo    Post     @relation(fields: [postId], references: [id])
@@ -171,7 +166,6 @@ model Comment {
   id                String    @id @default(uuid())
   commentBody       String
   createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
   commentedOnId     String
   commentedById     String
   postId            String
@@ -185,9 +179,7 @@ model Comment {
 
 model Reaction {
   id              String   @id @default(uuid())
-  reactionType    String
   createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
   reactedOnId     String
   reactedById     String
   postId          String
@@ -199,7 +191,6 @@ model Reaction {
 model Save {
   id            String   @id @default(uuid())
   createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
   savedById     String
   savedOnId     String
   postId        String
@@ -220,3 +211,45 @@ enum role {
   BASIC
   ADMIN
 }
+
+enum userType {
+  USER
+  STUDENT
+  ALUMNI
+}
+
+enum postType {
+  GENERAL
+  JOB
+  INTERNSHIP
+  RESEARCH
+  PROJECT
+  BLOG
+}
+
+enum imageType {
+  PROFILE
+  BANNER
+  COVERPOST
+  POST
+}
+
+enum extType {
+  APPLICATION
+  ZIP
+}
+
+enum docType {
+  POST
+  PROFILE
+}
+
+enum linkType {
+  POST
+  PROFILE
+}
+
+// npx prisma migrate dev
+// update_7_0
+// npx prisma generate
+// npm run db-push
