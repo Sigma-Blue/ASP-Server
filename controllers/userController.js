@@ -62,16 +62,32 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
 	const { userName, password } = req.body;
 
-	// Select the respective User
+	// Select the respective User Password
+	const { result: selectedPassword, error: selectedPasswordErr } =
+		await userModel.selectUserPasswordByUserName(userName);
 
-	const { result: selectedUser, error: selectedErr } =
+	// Select the respective User Info
+	const { result: selectedUser, error: selectedUserErr } =
 		await userModel.selectUserInfoByUserName(userName);
 
+	if (selectedUserErr) {
+		return res.status(500).json({
+			status: 'Failure: selectedUserErr ',
+			message: `Internal Server Error : ${selectedUserErr}`,
+		});
+	}
+
+	if (selectedPasswordErr) {
+		return res.status(500).json({
+			status: 'Failure: selectedPasswordErr ',
+			message: `Internal Server Error : ${selectedPasswordErr}`,
+		});
+	}
 	// Check the authenticity of the Password entered
 
 	const isMatch = hashUserPassword.verifyPassword(
 		password,
-		selectedUser.passwordHashed
+		selectedPassword.passwordHashed
 	);
 
 	if (!isMatch) {
@@ -93,6 +109,7 @@ exports.loginUser = async (req, res) => {
 		status: 'Success ',
 		token,
 		message: `User : ${userName} authorized to login`,
+		data: { user: { ...selectedUser } },
 	});
 };
 
@@ -283,7 +300,7 @@ exports.verifyOTP = async (req, res) => {
 	// Update the verification in the user db
 
 	const { result: updatedIsVerified, error: updatedErr } =
-		await userModel.updateIsVerifiedByUserName(userName);
+		await userModel.updateIsSignedByUserName(userName);
 
 	if (updatedErr) {
 		return res.status(500).json({
@@ -295,5 +312,57 @@ exports.verifyOTP = async (req, res) => {
 	return res.status(200).json({
 		status: 'Success ',
 		message: `OTP Token entered is correct`,
+	});
+};
+
+//	@route//	@desc		Follow the Selected User
+//	@body		id,toId
+
+exports.followUser = async (req, res) => {
+	const fromId = req.body.id;
+	const toId = req.body.toId;
+	let msg;
+
+	const { result: selectedFromToId, error: selectedFromToErr } =
+		await userModel.selectUserFollowsByFromIdToId(fromId, toId);
+
+	if (selectedFromToErr) {
+		return res.status(500).json({
+			status: 'Failure: selectFromToErr ',
+			message: `Internal Server Error : ${selectedFromToErr}`,
+		});
+	}
+
+	console.log(selectedFromToId.length === 0);
+
+	if (selectedFromToId.length === 0) {
+		const { result: createdUserFollows, error: createdUserFollowsErr } =
+			await userModel.createUserFollows(fromId, toId);
+
+		if (createdUserFollowsErr) {
+			return res.status(500).json({
+				status: 'Failure: createdUserFollowsErr ',
+				message: `Internal Server Error : ${createdUserFollowsErr}`,
+			});
+		}
+
+		msg = `User is following `;
+	} else {
+		const { result: deleteUserFollows, error: deleteUserFollowsErr } =
+			await userModel.deleteUserFollowsById(selectedFromToId[0].id);
+
+		if (deleteUserFollowsErr) {
+			return res.status(500).json({
+				status: 'Failure: selectFromToErr ',
+				message: `Internal Server Error : ${deleteUserFollowsErr}`,
+			});
+		}
+
+		msg = `User Un-followed`;
+	}
+
+	return res.status(200).json({
+		status: 'Success ',
+		message: `${msg}`,
 	});
 };

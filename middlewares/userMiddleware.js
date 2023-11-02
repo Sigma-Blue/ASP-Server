@@ -98,7 +98,7 @@ exports.isUserVerified = async (req, res, next) => {
 	const userName = req.body.userName;
 
 	const { result: selectedIsVerified, error: selectedErr } =
-		await userModel.selectIsVerifiedByUserName(userName);
+		await userModel.selectIsSignedByUserName(userName);
 
 	if (selectedErr) {
 		return res.status(500).json({

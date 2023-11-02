@@ -42,6 +42,8 @@ model UserFollows {
   toUserId   String
   fromUSer   User     @relation("fromUser", fields: [fromUserId], references: [id])
   toUser     User     @relation("toUser", fields: [toUserId], references: [id])
+
+  @@unique([fromUserId, toUserId])
 }
 
 model Profile {
