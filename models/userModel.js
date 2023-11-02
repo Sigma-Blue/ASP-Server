@@ -22,11 +22,10 @@ exports.createUser = async (userName, email, password) => {
 
 //* For creating user Following from one user to another
 
-exports.createUserFollows = async (isAccepted, fromUserId, toUserId) => {
+exports.createUserFollows = async (fromUserId, toUserId) => {
 	try {
 		const userFollows = await prisma.userFollows.create({
 			data: {
-				isAccepted,
 				fromUSer: {
 					connect: { id: fromUserId },
 				},
@@ -35,7 +34,7 @@ exports.createUserFollows = async (isAccepted, fromUserId, toUserId) => {
 				},
 			},
 		});
-		return { result: user, error: null };
+		return { result: userFollows, error: null };
 	} catch (err) {
 		return { result: null, error: err.message };
 	}
@@ -114,13 +113,31 @@ exports.updateUserFollowsByFromId = async (id) => {
 	}
 };
 
-//* For updating isVerified by userName
+//* For updating isSigned by userName
 
-exports.updateIsVerifiedByUserName = async (userName) => {
+exports.updateIsSignedByUserName = async (userName) => {
 	try {
 		const user = await prisma.user.update({
 			where: {
 				userName: userName,
+			},
+			data: {
+				isSigned: true,
+			},
+		});
+		return { result: user, error: null };
+	} catch (err) {
+		return { result: null, error: err.message };
+	}
+};
+
+//* For updating isVerified by userName
+
+exports.updateIsVerifiedByUserId = async (id) => {
+	try {
+		const user = await prisma.user.update({
+			where: {
+				id: id,
 			},
 			data: {
 				isVerified: true,
@@ -133,6 +150,21 @@ exports.updateIsVerifiedByUserName = async (userName) => {
 };
 
 //TODO: DELETING:
+
+//* For deleting user following by Id
+
+exports.deleteUserFollowsById = async (id) => {
+	try {
+		const userFollows = await prisma.userFollows.delete({
+			where: {
+				id: id,
+			},
+		});
+		return { result: null, error: null };
+	} catch (err) {
+		return { result: null, error: err.message };
+	}
+};
 
 //* For deleting user following by FromUserId
 
@@ -176,6 +208,14 @@ exports.selectUserInfoByEmailId = async (email) => {
 			where: {
 				emailId: email,
 			},
+			select: {
+				id: true,
+				emailId: true,
+				userName: true,
+				registeredAt: true,
+				updatedAt: true,
+				role: true,
+			},
 		});
 		return { result: user, error: null };
 	} catch (err) {
@@ -193,7 +233,29 @@ exports.selectUserIdByUserName = async (userName) => {
 			},
 			select: {
 				id: true,
+			},
+		});
+		return { result: user, error: null };
+	} catch (err) {
+		return { result: null, error: err.message };
+	}
+};
+
+//* For Selecting the unique User Info by UserName
+
+exports.selectUserInfoByUserName = async (userName) => {
+	try {
+		const user = await prisma.user.findUnique({
+			where: {
+				userName: userName,
+			},
+			select: {
+				id: true,
 				emailId: true,
+				userName: true,
+				registeredAt: true,
+				updatedAt: true,
+				role: true,
 			},
 		});
 		return { result: user, error: null };
@@ -204,16 +266,14 @@ exports.selectUserIdByUserName = async (userName) => {
 
 //* For Selecting the unique UserID and Password by UserName
 
-exports.selectUserInfoByUserName = async (userName) => {
+exports.selectUserPasswordByUserName = async (userName) => {
 	try {
 		const user = await prisma.user.findUnique({
 			where: {
 				userName: userName,
 			},
 			select: {
-				id: true,
 				passwordHashed: true,
-				emailId: true,
 			},
 		});
 		return { result: user, error: null };
@@ -229,6 +289,64 @@ exports.selectUserByUserId = async (id) => {
 		const user = await prisma.user.findUnique({
 			where: {
 				id: id,
+			},
+			select: {
+				id: true,
+			},
+		});
+		return { result: user, error: null };
+	} catch (err) {
+		return { result: null, error: err.message };
+	}
+};
+
+//* For Selecting the Password Reset Info By Token
+
+exports.selectPasswordResetInfoByToken = async (token) => {
+	try {
+		const passwordReset = await prisma.passwordReset.findUnique({
+			where: {
+				token: token,
+			},
+			select: {
+				expiresIn: true,
+				emailId: true,
+			},
+		});
+		return { result: passwordReset, error: null };
+	} catch (err) {
+		return { result: null, error: err.message };
+	}
+};
+
+//* For Selecting the isSigned  by userName
+
+exports.selectIsSignedByUserName = async (userName) => {
+	try {
+		const user = await prisma.user.findUnique({
+			where: {
+				userName: userName,
+			},
+			select: {
+				isSigned: true,
+			},
+		});
+		return { result: user, error: null };
+	} catch (err) {
+		return { result: null, error: err.message };
+	}
+};
+
+//* For Selecting the isVerified  by userId
+
+exports.selectIsVerifiedByUserId = async (id) => {
+	try {
+		const user = await prisma.user.findUnique({
+			where: {
+				id: id,
+			},
+			select: {
+				isSigned: true,
 			},
 		});
 		return { result: user, error: null };
@@ -259,53 +377,15 @@ exports.selectUserFollowsByFromId = async (id) => {
 
 //* For Selecting the Followers by To User Id
 
-exports.selectUserFollowsByToId = async (id) => {
+exports.selectUserFollowsByFromIdToId = async (fromId, toId) => {
 	try {
 		const user = await prisma.userFollows.findMany({
 			where: {
-				toUserId: id,
+				toUserId: toId,
+				fromUserId: fromId,
 			},
 			select: {
 				id: true,
-				fromUserId: true,
-				isAccepted: true,
-			},
-		});
-		return { result: user, error: null };
-	} catch (err) {
-		return { result: null, error: err.message };
-	}
-};
-
-//* For Selecting the Password Reset Info By Token
-
-exports.selectPasswordResetInfoByToken = async (token) => {
-	try {
-		const passwordReset = await prisma.passwordReset.findUnique({
-			where: {
-				token: token,
-			},
-			select: {
-				expiresIn: true,
-				emailId: true,
-			},
-		});
-		return { result: passwordReset, error: null };
-	} catch (err) {
-		return { result: null, error: err.message };
-	}
-};
-
-//* For Selecting the isVerified  by userName
-
-exports.selectIsVerifiedByUserName = async (userName) => {
-	try {
-		const user = await prisma.user.findUnique({
-			where: {
-				userName: userName,
-			},
-			select: {
-				isVerified: true,
 			},
 		});
 		return { result: user, error: null };
