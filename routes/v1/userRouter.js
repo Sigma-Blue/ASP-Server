@@ -10,16 +10,17 @@ const otpMiddleware = require('./../../middlewares/otpMiddleware');
 
 router.route('/register').post(userController.registerUser);
 
-router.route('/register/:userName').get(userController.sendRegisteredMail);
-
 router
-	.route('/register/otp/:userName')
-	.get(
-		userMiddleware.isUserNameExist,
+	.route('/register/sendOtp')
+	.post(
+		userMiddleware.isUserEmailIdExist,
 		otpMiddleware.generateOtpToken,
 		userController.sendOTP
-	)
-	.post(userController.verifyOTP);
+	);
+
+router.route('/register/verifyOtp').post(userController.verifyOTP);
+
+router.route('/register/sendMail').post(userController.sendRegisteredMail);
 
 // LOGIN :
 
@@ -27,19 +28,22 @@ router
 	.route('/login')
 	.post(
 		userMiddleware.isUserNameExist,
-		userMiddleware.isUserVerified,
+		userMiddleware.isUserSigned,
 		userController.loginUser
 	);
 
 // FORGET PASSWORD :
 
 router
-	.route('/forgetPassword/:email')
-	.get(
+	.route('/forgetPassword/sendOtp')
+	.post(
 		userMiddleware.isUserEmailIdExist,
 		otpMiddleware.generateOtpToken,
 		userController.sendOTP
-	)
+	);
+
+router
+	.route('/forgetPassword/verifyOtp')
 	.post(userController.verifyOTP)
 	.patch(
 		userMiddleware.isUserEmailIdExist,
@@ -49,6 +53,8 @@ router
 
 // tokenMiddleware.protectedRoute,
 // 	userMiddleware.isUserIdExist,
+
+// FOLLOW USER :
 
 router.route('/follow').post(userController.followUser);
 
