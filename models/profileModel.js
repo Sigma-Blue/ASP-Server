@@ -1,119 +1,112 @@
-const prisma = require('../prisma/prisma');
+const prisma = require("../prisma/prisma");
 
 //TODO: CREATING:
 
 //* For creating Profile of an user
 
 exports.createProfile = async (
-	fName,
-	mName,
-	lName,
-	userType,
-	dptName,
-	regNo,
-	dob,
-	gender,
-	age,
-	userId
+  fName,
+  lName,
+  dptName,
+  regNo,
+  dob,
+  gender,
+  age,
+  userId
 ) => {
-	try {
-		const profile = await prisma.profile.create({
-			data: {
-				firstName: fName,
-				middleName: mName,
-				lastName: lName,
-				userType: userType,
-				departmentName: dptName,
-				registerNo: regNo,
-				birthDate: dob,
-				gender: gender,
-				age: age,
-				createdBy: {
-					connect: {
-						id: userId,
-					},
-				},
-			},
-		});
-		return { result: profile, error: null };
-	} catch (err) {
-		return { result: null, error: err.message };
-	}
+  try {
+    const profile = await prisma.profile.create({
+      data: {
+        firstName: fName,
+        lastName: lName,
+        departmentName: dptName,
+        registerNo: regNo,
+        birthDate: dob,
+        gender: gender,
+        age: age,
+        createdBy: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+    });
+    return { result: profile, error: null };
+  } catch (err) {
+    return { result: null, error: err.message };
+  }
 };
 
 //* For creating user/profile Location
 
 exports.createLocation = async (
-	addr1,
-	addr2,
-	city,
-	state,
-	country,
-	pin,
-	nationality,
-	contact,
-	profileId,
-	userId
+  addr1,
+  addr2,
+  city,
+  state,
+  country,
+  pin,
+  nationality,
+  contact,
+  profileId
 ) => {
-	try {
-		const location = await prisma.location.create({
-			data: {
-				addressLine1: addr1,
-				addressLine2: addr2,
-				city,
-				state,
-				country,
-				postalCode: pin,
-				nationality,
-				contactNo: contact,
-				belongsTo: {
-					connect: { id: profileId },
-				},
-				relatedTo: {
-					connect: { id: userId },
-				},
-			},
-		});
-		return { result: location, error: null };
-	} catch (err) {
-		return { result: null, error: err.message };
-	}
+  try {
+    const location = await prisma.location.create({
+      data: {
+        city,
+        state,
+        country,
+        nationality,
+        contactNo: contact,
+        addressLine1: addr1,
+        addressLine2: addr2,
+        postalCode: pin,
+        belongsTo: {
+          connect: {
+            id: profileId,
+          },
+        },
+      },
+    });
+    return { result: location, error: null };
+  } catch (err) {
+    return { result: null, error: err.message };
+  }
 };
 
 //* For creating profile Course
 
 exports.createCourse = async (
-	crsName,
-	crsDesc,
-	sDate,
-	eDate,
-	tPeriod,
-	instName,
-	instLocation,
-	isRemote,
-	profileId,
-	userId
+  crsName,
+  crsDesc,
+  sDate,
+  eDate,
+  tPeriod,
+  instName,
+  instLocation,
+  isRemote,
+  profileId
 ) => {
-	try {
-		const course = await prisma.course.create({
-			data: {
-				courseName: crsName,
-				courseDescription: crsDesc,
-				startDate: sDate,
-				endDate: eDate,
-				timePeriod: tPeriod,
-				instituteName: instName,
-				instituteLocation: instLocation,
-				isRemote,
-				belongsTo: {
-					connect: { id: profileId },
-				},
-				relatedTo: {
-					connect: { id: userId },
-				},
-			},
-		});
-	} catch (err) {}
+  try {
+    const course = await prisma.course.create({
+      data: {
+        courseName: crsName,
+        courseDescription: crsDesc,
+        startDate: sDate,
+        endDate: eDate,
+        timePeriod: tPeriod,
+        instituteName: instName,
+        instituteLocation: instLocation,
+        isRemote,
+        belongsTo: {
+          connect: { id: profileId },
+        },
+      },
+    });
+    return { result: course, err: null };
+  } catch (err) {
+    return { result: null, error: err.message };
+  }
 };
 
 //TODO: UPDATING:
@@ -121,105 +114,105 @@ exports.createCourse = async (
 //* For updating Profile info by Profile ID
 
 exports.updateProfileById = async (
-	id,
-	fName,
-	mName,
-	lName,
-	userType,
-	dptName,
-	regNo,
-	dob,
-	gender,
-	age
+  id,
+  fName,
+  mName,
+  lName,
+  userType,
+  dptName,
+  regNo,
+  dob,
+  gender,
+  age
 ) => {
-	try {
-		const profile = await prisma.profile.update({
-			where: {
-				id: id,
-			},
-			data: {
-				firstName: fName,
-				middleName: mName,
-				lastName: lName,
-				userType: userType,
-				departmentName: dptName,
-				registerNo: regNo,
-				birthDate: dob,
-				gender: gender,
-				age: age,
-			},
-		});
-		return { result: profile, error: null };
-	} catch (err) {
-		return { result: null, error: err.message };
-	}
+  try {
+    const profile = await prisma.profile.update({
+      where: {
+        id: id,
+      },
+      data: {
+        firstName: fName,
+        middleName: mName,
+        lastName: lName,
+        userType: userType,
+        departmentName: dptName,
+        registerNo: regNo,
+        birthDate: dob,
+        gender: gender,
+        age: age,
+      },
+    });
+    return { result: profile, error: null };
+  } catch (err) {
+    return { result: null, error: err.message };
+  }
 };
 
 //* For updating Location info by Location ID
 
 exports.updateLocationById = async (
-	id,
-	addr1,
-	addr2,
-	city,
-	state,
-	country,
-	pin,
-	nationality,
-	contact
+  id,
+  addr1,
+  addr2,
+  city,
+  state,
+  country,
+  pin,
+  nationality,
+  contact
 ) => {
-	try {
-		const profile = await prisma.profile.update({
-			where: {
-				id: id,
-			},
-			data: {
-				addressLine1: addr1,
-				addressLine2: addr2,
-				city,
-				state,
-				country,
-				postalCode: pin,
-				nationality,
-				contactNo: contact,
-			},
-		});
-		return { result: profile, error: null };
-	} catch (err) {
-		return { result: null, error: err.message };
-	}
+  try {
+    const profile = await prisma.profile.update({
+      where: {
+        id: id,
+      },
+      data: {
+        addressLine1: addr1,
+        addressLine2: addr2,
+        city,
+        state,
+        country,
+        postalCode: pin,
+        nationality,
+        contactNo: contact,
+      },
+    });
+    return { result: profile, error: null };
+  } catch (err) {
+    return { result: null, error: err.message };
+  }
 };
 
 //* For updating Course by Course Id
 
 exports.updateCourseById = async (
-	id,
-	crsName,
-	crsDesc,
-	sDate,
-	eDate,
-	tPeriod,
-	instName,
-	instLocation,
-	isRemote
+  id,
+  crsName,
+  crsDesc,
+  sDate,
+  eDate,
+  tPeriod,
+  instName,
+  instLocation,
+  isRemote
 ) => {
-	try {
-		const course = await prisma.course.update({
-			where: {
-				id: id,
-			},
-			data: {
-				courseName: crsName,
-				courseDescription: crsDesc,
-				startDate: sDate,
-				endDate: eDate,
-				timePeriod: tPeriod,
-				instituteName: instName,
-				instituteLocation: instLocation,
-				isRemote,
-			},
-		});
-	} catch (err) {}
+  try {
+    const course = await prisma.course.update({
+      where: {
+        id: id,
+      },
+      data: {
+        courseName: crsName,
+        courseDescription: crsDesc,
+        startDate: sDate,
+        endDate: eDate,
+        timePeriod: tPeriod,
+        instituteName: instName,
+        instituteLocation: instLocation,
+        isRemote,
+      },
+    });
+  } catch (err) {}
 };
 
 //TODO: DELETING:
@@ -227,16 +220,16 @@ exports.updateCourseById = async (
 //* For deleting course by using Course ID
 
 exports.deleteCourseById = async (id) => {
-	try {
-		const course = await prisma.course.deleteMany({
-			where: {
-				id: id,
-			},
-		});
-		return { result: null, error: null };
-	} catch (err) {
-		return { result: null, error: err.message };
-	}
+  try {
+    const course = await prisma.course.deleteMany({
+      where: {
+        id: id,
+      },
+    });
+    return { result: null, error: null };
+  } catch (err) {
+    return { result: null, error: err.message };
+  }
 };
 
 //TODO: READING:
@@ -244,59 +237,59 @@ exports.deleteCourseById = async (id) => {
 //* For Selecting the unique Profile by UserId
 
 exports.selectProfileByUserId = async (id) => {
-	try {
-		const profile = await prisma.profile.findUnique({
-			where: {
-				userId: id,
-			},
-		});
-		return { result: profile, error: null };
-	} catch (err) {
-		return { result: null, error: err.message };
-	}
+  try {
+    const profile = await prisma.profile.findUnique({
+      where: {
+        userId: id,
+      },
+    });
+    return { result: profile, error: null };
+  } catch (err) {
+    return { result: null, error: err.message };
+  }
 };
 
 //* For Selecting the unique Location by ProfileId
 
 exports.selectLocationByProfileId = async (id) => {
-	try {
-		const location = await prisma.location.findUnique({
-			where: {
-				profileId: id,
-			},
-		});
-		return { result: location, error: null };
-	} catch (err) {
-		return { result: null, error: err.message };
-	}
+  try {
+    const location = await prisma.location.findUnique({
+      where: {
+        profileId: id,
+      },
+    });
+    return { result: location, error: null };
+  } catch (err) {
+    return { result: null, error: err.message };
+  }
 };
 
 //* For Selecting the unique Location by UserId
 
 exports.selectLocationByUserId = async (id) => {
-	try {
-		const location = await prisma.location.findUnique({
-			where: {
-				userId: id,
-			},
-		});
-		return { result: location, error: null };
-	} catch (err) {
-		return { result: null, error: err.message };
-	}
+  try {
+    const location = await prisma.location.findUnique({
+      where: {
+        userId: id,
+      },
+    });
+    return { result: location, error: null };
+  } catch (err) {
+    return { result: null, error: err.message };
+  }
 };
 
 //* For Selecting the set of Courses by ProfileId
 
 exports.selectCoursesByProfileId = async (id) => {
-	try {
-		const course = await prisma.course.findMany({
-			where: {
-				profileId: id,
-			},
-		});
-		return { result: course, error: null };
-	} catch (err) {
-		return { result: null, error: err.message };
-	}
+  try {
+    const course = await prisma.course.findMany({
+      where: {
+        profileId: id,
+      },
+    });
+    return { result: course, error: null };
+  } catch (err) {
+    return { result: null, error: err.message };
+  }
 };

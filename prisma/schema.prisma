@@ -19,7 +19,6 @@ model User {
   role               role          @default(BASIC)
   commentBy          Comment[]     @relation("commentedBy")
   commentOn          Comment[]     @relation("commentedOn")
-  location           Location?
   post               Post[]
   profile            Profile?
   reactby            Reaction[]    @relation("reactedBy")
@@ -50,7 +49,7 @@ model Profile {
   userType       userType   @default(USER)
   departmentName String
   registerNo     Int        @unique
-  birthDate      DateTime
+  birthDate      String
   gender         String
   age            Int
   userId         String     @unique
@@ -77,10 +76,8 @@ model Location {
   contactNo    String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  profileId    String   @unique @default("NULL")
-  userId       String   @unique @default("NULL")
+  profileId    String   @unique
   belongsTo    Profile  @relation(fields: [profileId], references: [id])
-  relatedTo    User     @relation(fields: [userId], references: [id])
 }
 
 model Post {
@@ -103,8 +100,8 @@ model Course {
   id                String   @id @default(uuid())
   courseName        String
   courseDescription String
-  startDate         DateTime
-  endDate           DateTime
+  startDate         String
+  endDate           String
   timePeriod        Int
   instituteName     String
   instituteLocation String
