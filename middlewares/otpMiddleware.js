@@ -12,14 +12,7 @@ exports.generateOtpToken = async (req, res, next) => {
 
 	// Get the email in possible ways
 
-	let email = req.params.email;
-
-	if (!email) {
-		const userName = req.params.userName;
-		const { result: selectedUserName, error: selectedUserErr } =
-			await userModel.selectUserInfoByUserName(userName);
-		email = selectedUserName.emailId;
-	}
+	const email = req.body.email;
 
 	// Store the OtpToken , expireIn and email in db
 

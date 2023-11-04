@@ -115,7 +115,7 @@ exports.loginUser = async (req, res) => {
 
 //	@route	PATCH	/resetPassword/:userName
 //	@desc		Reset the Password of Existing User by given userName
-//	@body		password,id,emailId
+//	@body		password,id,email
 
 exports.resetPassword = async (req, res) => {
 	const { id, password } = req.body;
@@ -140,29 +140,29 @@ exports.resetPassword = async (req, res) => {
 	});
 };
 
-//	@route	GET	/resetPassword/:userName
+//	@route	POST	/resetPassword/sendMail
 //	@desc		Send Registered Mail to the user mail
-//	@body		password,id,emailId
+//	@body		password,id,email
 
 exports.sendRegisteredMail = async (req, res) => {
-	const userName = req.params.userName;
+	const email = req.body.email;
 
-	// Select the email address of the respective user
+	// Select the userName of the respective user
 
-	const { result: selectedUser, error: selectedErr } =
-		await userModel.selectUserInfoByUserName(userName);
+	const { result: selectedUserName, error: selectedUserNameErr } =
+		await userModel.selectUserNameByEmailId(email);
 
-	if (selectedErr) {
+	if (selectedUserNameErr) {
 		return res.status(500).json({
-			status: 'Failure: SelectedErr ',
-			message: `Internal Server Error : ${selectedErr}`,
+			status: 'Failure: selectedUserNameErr ',
+			message: `Internal Server Error : ${selectedUserNameErr}`,
 		});
 	}
 
 	// Send the registration email to the user
 
 	const { result: registeredMail, error: registeredErr } =
-		emailUtil.registrationMailer(selectedUser.emailId, userName);
+		emailUtil.registrationMailer(email, selectedUserName.userName);
 
 	if (registeredErr) {
 		return res.status(500).json({
@@ -177,28 +177,21 @@ exports.sendRegisteredMail = async (req, res) => {
 	});
 };
 
-//	@route	GET	/resetPassword/:userName
+//	@route	POST	/resetPassword/sendOtp
 //	@desc		Send OTP to the user mail
-//	@body		password,id,emailId
+//	@body		id,email,userName
 
 exports.sendOTP = async (req, res) => {
 	const otpToken = req.body.otpToken;
 
 	// Get the userName and emailId from the possible ways
 
-	let userName = req.params.userName;
-	let emailId = req.body.emailId;
-
-	if (!userName) {
-		userName = req.body.userName;
-	}
-	if (!emailId) {
-		emailId = req.params.email;
-	}
+	const userName = req.body.userName;
+	const email = req.body.email;
 
 	// Send the OTP to the user email
 	const { result: resetPasswordMail, error: resetPasswordErr } =
-		emailUtil.resetPasswordMailer(emailId, userName, otpToken);
+		emailUtil.resetPasswordMailer(email, userName, otpToken);
 
 	if (resetPasswordErr) {
 		return res.status(500).json({
@@ -213,42 +206,13 @@ exports.sendOTP = async (req, res) => {
 	});
 };
 
-//	@route	POST	/resetPassword/:userName
+//	@route	POST	/resetPassword/verifyOtp
 //	@desc		Verify the user entered OTP with the generated OTP
-//	@body		otp
+//	@body		otp,email
 
 exports.verifyOTP = async (req, res) => {
 	const otpToken = req.body.otpToken;
-
-	// Get the userName and email of the user from possible ways
-	let userName = req.params.userName;
-	let email = req.params.email;
-
-	if (!userName) {
-		const { result: selectedEmail, error: selectedEmailErr } =
-			await userModel.selectUserInfoByEmailId(email);
-
-		if (!selectedEmail) {
-			return res.status(404).json({
-				status: 'Failure: SelectedOtpToken',
-				message: `Given Email: ${email} does not exist`,
-			});
-		}
-		userName = selectedEmail.userName;
-	}
-
-	if (!email) {
-		const { result: selectedUserName, error: selectedUserErr } =
-			await userModel.selectUserInfoByUserName(userName);
-
-		if (!selectedUserName) {
-			return res.status(404).json({
-				status: 'Failure: SelectedOtpToken',
-				message: `Given UserName: ${userName} does not exist`,
-			});
-		}
-		email = selectedUserName.emailId;
-	}
+	const email = req.body.email;
 
 	// Select and Check the Validity of the OTP and emailId of the user
 
@@ -300,7 +264,7 @@ exports.verifyOTP = async (req, res) => {
 	// Update the verification in the user db
 
 	const { result: updatedIsVerified, error: updatedErr } =
-		await userModel.updateIsSignedByUserName(userName);
+		await userModel.updateIsSignedByEmailId(email);
 
 	if (updatedErr) {
 		return res.status(500).json({
@@ -315,7 +279,8 @@ exports.verifyOTP = async (req, res) => {
 	});
 };
 
-//	@route//	@desc		Follow the Selected User
+//	@route	POST /follow
+//	@desc		Follow the Selected User
 //	@body		id,toId
 
 exports.followUser = async (req, res) => {

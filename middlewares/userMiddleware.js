@@ -1,14 +1,11 @@
 const userModel = require('./../models/userModel');
 
-//	@route	PATCH	/resetPassword/:userName
+//	@route
 //	@desc		Check whether the userName exists => set userId email Id to the req body => next()
 //	@body		password
 
 exports.isUserNameExist = async (req, res, next) => {
-	let userName = req.params.userName;
-	if (!userName) {
-		userName = req.body.userName;
-	}
+	const userName = req.body.userName;
 	const { result: selectedUser, error: selectedErr } =
 		await userModel.selectUserInfoByUserName(userName);
 
@@ -33,15 +30,15 @@ exports.isUserNameExist = async (req, res, next) => {
 	next();
 };
 
-//	@route	PATCH	/resetPassword/:userName
+//	@route
 //	@desc		Check whether emailId exists => set userId userName to the req body => next()
-//	@body		password
+//	@body		emailId
 
 exports.isUserEmailIdExist = async (req, res, next) => {
-	let emailId = req.params.email;
+	const email = req.body.email;
 
 	const { result: selectedEmail, error: selectedErr } =
-		await userModel.selectUserInfoByEmailId(emailId);
+		await userModel.selectUserInfoByEmailId(email);
 
 	if (selectedErr) {
 		return res.status(500).json({
@@ -53,12 +50,12 @@ exports.isUserEmailIdExist = async (req, res, next) => {
 	if (!selectedEmail) {
 		return res.status(404).json({
 			status: 'Failure: SelectedUser',
-			message: `User: ${emailId} does not exist`,
+			message: `User: ${email} does not exist`,
 		});
 	}
 
 	req.body.id = selectedEmail.id;
-	req.body.Name = selectedEmail.userName;
+	req.body.userName = selectedEmail.userName;
 
 	next();
 };
@@ -91,26 +88,26 @@ exports.isUserIdExist = async (req, res, next) => {
 };
 
 //	@route
-//	@desc		Check whether the user is Verified  => next()
+//	@desc		Check whether the user is Signed In => next()
 //	@body		tokenId
 
-exports.isUserVerified = async (req, res, next) => {
+exports.isUserSigned = async (req, res, next) => {
 	const userName = req.body.userName;
 
-	const { result: selectedIsVerified, error: selectedErr } =
+	const { result: selectedIsSigned, error: selectedIsSignedErr } =
 		await userModel.selectIsSignedByUserName(userName);
 
-	if (selectedErr) {
+	if (selectedIsSignedErr) {
 		return res.status(500).json({
-			status: 'Failure: SelectedIsVerifiedErr ',
-			message: `Internal Server Error : ${selectedErr}`,
+			status: 'Failure: selectedIsSignedErr ',
+			message: `Internal Server Error : ${selectedIsSignedErr}`,
 		});
 	}
 
-	if (!selectedIsVerified.isVerified) {
+	if (!selectedIsSigned.isSigned) {
 		return res.status(401).json({
 			status: 'Failure: isVerified',
-			message: `Unauthorized : user is not yet verified`,
+			message: `Unauthorized : user is not yet signedIn `,
 		});
 	}
 

@@ -3,7 +3,6 @@ const router = express.Router();
 
 const docController = require('../../controllers/docController');
 const storageMiddleware = require('../../middlewares/storageMiddleware');
-const multerStorage = require('../../services/multerStorage');
 
 router
 	.route('/image/profile')
@@ -28,6 +27,16 @@ router
 		storageMiddleware.resizePostPhotos,
 		docController.uploadPostPhotos
 	);
+
+router
+	.route('/about/profile')
+	.post(docController.uploadProfileAbout)
+	.patch(docController.changeProfileAbout);
+
+router.route('/about/post').post(docController.uploadPostAbout);
+
+router.route('/about/post/:postId').get(docController.getPostAbout);
+router.route('/about/profile/:profileId').get(docController.getProfileAbout);
 
 module.exports = router;
 

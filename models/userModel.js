@@ -115,11 +115,11 @@ exports.updateUserFollowsByFromId = async (id) => {
 
 //* For updating isSigned by userName
 
-exports.updateIsSignedByUserName = async (userName) => {
+exports.updateIsSignedByEmailId = async (email) => {
 	try {
 		const user = await prisma.user.update({
 			where: {
-				userName: userName,
+				emailId: email,
 			},
 			data: {
 				isSigned: true,
@@ -199,6 +199,24 @@ exports.deleteOtpTokenWithDate = async () => {
 };
 
 //TODO: READING:
+
+//* For Selecting the User by email Id
+
+exports.selectUserNameByEmailId = async (email) => {
+	try {
+		const user = await prisma.user.findUnique({
+			where: {
+				emailId: email,
+			},
+			select: {
+				userName: true,
+			},
+		});
+		return { result: user, error: null };
+	} catch (err) {
+		return { result: null, error: err.message };
+	}
+};
 
 //* For Selecting the User by email Id
 
