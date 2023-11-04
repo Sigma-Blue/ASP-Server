@@ -51,7 +51,11 @@ model Profile {
   userType       userType      @default(USER)
   departmentName String
   registerNo     Int           @unique
+<<<<<<< HEAD
   birthDate      String
+=======
+  birthDate      DateTime
+>>>>>>> main
   gender         String
   age            Int
   userId         String        @unique

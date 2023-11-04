@@ -133,11 +133,11 @@ exports.updateIsSignedByEmailId = async (email) => {
 
 //* For updating isVerified by userName
 
-exports.updateIsVerifiedByUserId = async (id) => {
+exports.updateIsVerifiedByUserName = async (userName) => {
   try {
     const user = await prisma.user.update({
       where: {
-        id: id,
+        userName: userName,
       },
       data: {
         isVerified: true,
@@ -404,24 +404,6 @@ exports.selectUserFollowsByFromIdToId = async (fromId, toId) => {
       },
       select: {
         id: true,
-      },
-    });
-    return { result: user, error: null };
-  } catch (err) {
-    return { result: null, error: err.message };
-  }
-};
-
-//* For selecting Username by User Id
-
-exports.selectUserNameByUserId = async (id) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: id,
-      },
-      select: {
-        userName: true,
       },
     });
     return { result: user, error: null };
