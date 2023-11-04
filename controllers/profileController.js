@@ -121,3 +121,108 @@ exports.addCourse = async (req, res) => {
     message: `Successfully Saved the Course details`,
   });
 };
+
+//  @route  POST  /createProfileAbout
+//  @desc   Adding About of Profile for New User
+//  @body   abtDesc,profileId
+
+exports.addProfileAbout = async (req, res) => {
+  const { abtDesc, profileId } = req.body;
+
+  const { result: createdAbout, error: createdErr } =
+    await profileModel.createProfileAbout(abtDesc, profileId);
+
+  if (createdErr) {
+    return res.status(500).json({
+      status: "Failure: CreatedErr",
+      message: `Internal Server Error : ${createdErr}`,
+    });
+  }
+
+  console.log(createdAbout);
+  return res.status(201).json({
+    status: "Success",
+    message: `Successfully Saved the About details`,
+  });
+};
+
+//  @route  GET  /:userId
+//  @desc   Getting the profile for a given userID
+//  @body
+
+exports.getProfile = async (req, res) => {
+  const userId = req.params.userId;
+  console.log(userId.slice(1));
+
+  const { result: selectedProfile, error: selectedErr } =
+    await profileModel.selectProfileByUserId(userId.slice(1));
+
+  if (selectedErr) {
+    return res.status(500).json({
+      status: "Failure: SelectedErr",
+      message: `Internal Server Error : ${selectedErr}`,
+    });
+  }
+
+  console.log(selectedProfile);
+  return res.status(200).json({
+    status: "Success",
+    data: {
+      profile: selectedProfile,
+    },
+  });
+};
+
+//  @route  GET  /location/:profileId
+//  @desc   Getting the location details for a given userID
+//  @body
+
+exports.getLocation = async (req, res) => {
+  const profileId = req.params.profileId;
+  console.log(profileId.slice(1));
+
+  const { result: selectedLocation, error: selectedErr } =
+    await profileModel.selectLocationByProfileId(profileId.slice(1));
+
+  if (selectedErr) {
+    return res.status(500).json({
+      status: "Failure: SelectedErr",
+      message: `Internal Server Error : ${selectedErr}`,
+    });
+  }
+
+  console.log(selectedLocation);
+  return res.status(200).json({
+    status: "Success",
+    data: {
+      location: selectedLocation,
+    },
+  });
+};
+
+//  @route  GET  /course/:profileId
+//  @desc   Getting the course details for a given userID
+//  @body
+
+exports.getCourse = async (req, res) => {
+  const profileId = req.params.profileId;
+  console.log(profileId.slice(1));
+
+  const { result: selectedCourse, error: selectedErr } =
+    await profileModel.selectCoursesByProfileId(profileId.slice(1));
+
+  if (selectedErr) {
+    return res.status(500).json({
+      status: "Failure: SelectedErr",
+      message: `Internal Server Error : ${selectedErr}`,
+    });
+  }
+
+  console.log(selectedCourse);
+  return res.status(200).json({
+    status: "Success",
+    data: {
+      course: selectedCourse,
+    },
+  });
+};

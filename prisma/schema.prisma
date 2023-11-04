@@ -40,28 +40,32 @@ model UserFollows {
   toUserId   String
   fromUSer   User     @relation("fromUser", fields: [fromUserId], references: [id])
   toUser     User     @relation("toUser", fields: [toUserId], references: [id])
+
+  @@unique([fromUserId, toUserId])
 }
 
 model Profile {
-  id             String     @id @default(uuid())
+  id             String        @id @default(uuid())
   firstName      String
   lastName       String
-  userType       userType   @default(USER)
+  userType       userType      @default(USER)
   departmentName String
-  registerNo     Int        @unique
+  registerNo     Int           @unique
   birthDate      String
   gender         String
   age            Int
-  userId         String     @unique
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
-  createdBy      User       @relation(fields: [userId], references: [id])
-  about          About?
+  userId         String        @unique
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  createdBy      User          @relation(fields: [userId], references: [id])
+  about          ProfileAbout?
   Course         Course[]
   Document       Document[]
   Image          Image[]
   Link           Link[]
   Location       Location?
+  Work           Work[]
+  Skill          Skill[]
 }
 
 model Location {
@@ -87,7 +91,7 @@ model Post {
   createdAt       DateTime   @default(now())
   userId          String
   createdBy       User       @relation(fields: [userId], references: [id])
-  about           About?
+  about           PostAbout?
   Comment         Comment[]
   Document        Document[]
   Image           Image[]
@@ -105,21 +109,56 @@ model Course {
   timePeriod        Int
   instituteName     String
   instituteLocation String
-  isRemote          Boolean
+  isRemote          Boolean  @default(false)
   createdAt         DateTime @default(now())
   profileId         String
   belongsTo         Profile  @relation(fields: [profileId], references: [id])
 }
 
-model About {
+model Work {
+  id                   String   @id @default(uuid())
+  workDesignation      String
+  courseDescription    String
+  startDate            String
+  endDate              String
+  timePeriod           Int
+  organizationName     String
+  organizationLocation String
+  isRemote             Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  profileId            String
+  belongsTo            Profile  @relation(fields: [profileId], references: [id])
+}
+
+model Skill {
+  id                   String   @id @default(uuid())
+  skillName            String
+  skillLink            String
+  skillRate            String
+  timePeriod           Int
+  organizationName     String
+  organizationLocation String
+  isRemote             Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  profileId            String
+  belongsTo            Profile  @relation(fields: [profileId], references: [id])
+}
+
+model PostAbout {
   id               String   @id @default(uuid())
   aboutDescription String   @default("NULL")
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  isPost           Boolean
-  profileId        String   @unique @default("NULL")
-  postId           String   @unique @default("NULL")
+  postId           String   @unique
   postBelongsTo    Post     @relation(fields: [postId], references: [id])
+}
+
+model ProfileAbout {
+  id               String   @id @default(uuid())
+  aboutDescription String   @default("NULL")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  profileId        String   @unique
   profileBelongsTo Profile  @relation(fields: [profileId], references: [id])
 }
 
@@ -231,7 +270,7 @@ enum imageType {
 }
 
 enum extType {
-  APPLICATION
+  PDF
   ZIP
 }
 

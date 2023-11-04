@@ -2,17 +2,31 @@ const prisma = require('../prisma/prisma');
 
 //TODO: CREATING:
 
-//* For creating about for post/profile
+//* For creating about for post
 
-exports.createAbout = async (abtDesc, isPost, postId, profileId) => {
+exports.createPostAbout = async (abtDesc, postId) => {
 	try {
-		const about = await prisma.about.create({
+		const about = await prisma.postAbout.create({
 			data: {
 				aboutDescription: abtDesc,
-				isPost,
 				postBelongsTo: {
 					connect: { id: postId },
 				},
+			},
+		});
+		return { result: about, error: null };
+	} catch (err) {
+		return { result: null, error: err.message };
+	}
+};
+
+//* For creating about for profile
+
+exports.createProfileAbout = async (abtDesc, profileId) => {
+	try {
+		const about = await prisma.profileAbout.create({
+			data: {
+				aboutDescription: abtDesc,
 				profileBelongsTo: {
 					connect: { id: profileId },
 				},
@@ -115,11 +129,12 @@ exports.createLink = async (isPost, linkName, linkUrl, postId, profileId) => {
 
 //* For updating About by About Id
 
-exports.updateCourseById = async (id, abtDesc) => {
+exports.updateProfileAboutById = async (id, abtType, abtDesc) => {
 	try {
-		const about = await prisma.course.update({
+		const about = await prisma.profileAbout.update({
 			where: {
 				id: id,
+				aboutType: abtType,
 			},
 			data: {
 				aboutDescription: abtDesc,
@@ -168,6 +183,21 @@ exports.deleteDocumentById = async (id) => {
 exports.deleteLinkById = async (id) => {
 	try {
 		const image = await prisma.link.delete({
+			where: {
+				id: id,
+			},
+		});
+		return { result: null, error: null };
+	} catch (err) {
+		return { result: null, error: err.message };
+	}
+};
+
+//* For deleting an About by About Id
+
+exports.deletePostAboutById = async (id) => {
+	try {
+		const about = await prisma.postAbout.delete({
 			where: {
 				id: id,
 			},
@@ -274,7 +304,7 @@ exports.selectImageByPostId = async (id) => {
 
 exports.selectAboutByProfileId = async (id) => {
 	try {
-		const about = await prisma.about.findUnique({
+		const about = await prisma.profileAbout.findUnique({
 			where: {
 				profileId: id,
 			},
@@ -287,11 +317,15 @@ exports.selectAboutByProfileId = async (id) => {
 
 //* For Selecting the About by Post Id
 
-exports.selectAboutByPostId = async (id) => {
+exports.selectAboutByPostId = async (postId) => {
 	try {
-		const about = await prisma.about.findUnique({
+		const about = await prisma.postAbout.findUnique({
 			where: {
-				postId: id,
+				postId: postId,
+			},
+			select: {
+				id: true,
+				aboutDescription: true,
 			},
 		});
 		return { result: about, error: null };
