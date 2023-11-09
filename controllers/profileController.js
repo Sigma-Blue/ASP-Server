@@ -48,6 +48,7 @@ exports.addLocation = async (req, res) => {
     nationality,
     contact,
     profileId,
+    userId,
   } = req.body;
 
   const { result: createdLocation, error: createdErr } =
@@ -60,7 +61,8 @@ exports.addLocation = async (req, res) => {
       pin,
       nationality,
       contact,
-      profileId
+      profileId,
+      userId
     );
 
   if (createdErr) {

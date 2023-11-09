@@ -48,7 +48,8 @@ exports.createLocation = async (
   pin,
   nationality,
   contact,
-  profileId
+  profileId,
+  userId
 ) => {
   try {
     const location = await prisma.location.create({
@@ -64,6 +65,11 @@ exports.createLocation = async (
         belongsTo: {
           connect: {
             id: profileId,
+          },
+        },
+        relatedTo: {
+          connect: {
+            id: userId,
           },
         },
       },

@@ -21,16 +21,10 @@ exports.createPost = async (pDesc, pType, userId) => {
 
 //* For Creating Reaction to a Post
 
-exports.createReaction = async (
-  reactType,
-  reactedOnId,
-  reactedById,
-  postId
-) => {
+exports.createReaction = async (reactedOnId, reactedById, postId) => {
   try {
     const reaction = await prisma.reaction.create({
       data: {
-        reactionType: reactType,
         postReactedOn: {
           connect: { id: postId },
         },
@@ -54,8 +48,7 @@ exports.createComment = async (
   commentBody,
   commentedOnId,
   commentedById,
-  postId,
-  commentId
+  postId
 ) => {
   try {
     const comment = await prisma.comment.create({
@@ -70,9 +63,6 @@ exports.createComment = async (
         userCommentedOn: {
           connect: { id: commentedOnId },
         },
-        replyOnComment: {
-          connect: { id: commentId },
-        },
       },
     });
     return { result: comment, error: null };
@@ -83,7 +73,7 @@ exports.createComment = async (
 
 //* For Creating Save to a post
 
-exports.createdSave = async (savedOnId, saveById, postId) => {
+exports.createSave = async (savedOnId, saveById, postId) => {
   try {
     const save = await prisma.save.create({
       data: {
@@ -108,17 +98,13 @@ exports.createdSave = async (savedOnId, saveById, postId) => {
 
 //* For deleting a post by Post ID
 
-exports.deletePost = async (id) => {
+exports.deletePostByPostId = async (id) => {
   try {
     const post = await prisma.post.delete({
       where: {
         id: id,
       },
     });
-
-    deleteCommentByPostId(id);
-    deleteReactionByPostId(id);
-    deleteSaveByPostId(id);
     return { result: null, error: null };
   } catch (err) {
     return { result: null, error: err.message };
@@ -144,7 +130,7 @@ exports.deleteReactionById = async (id) => {
 
 exports.deleteReactionByPostId = async (id) => {
   try {
-    const reaction = await prisma.reaction.delete({
+    const reaction = await prisma.reaction.deleteMany({
       where: {
         postId: id,
       },
@@ -174,7 +160,7 @@ exports.deleteCommentById = async (id) => {
 
 exports.deleteCommentByPostId = async (id) => {
   try {
-    const comment = await prisma.comment.delete({
+    const comment = await prisma.comment.deleteMany({
       where: {
         postId: id,
       },
@@ -204,7 +190,7 @@ exports.deleteSaveById = async (id) => {
 
 exports.deleteSaveByPostId = async (id) => {
   try {
-    const save = await prisma.save.delete({
+    const save = await prisma.save.deleteMany({
       where: {
         postId: id,
       },
