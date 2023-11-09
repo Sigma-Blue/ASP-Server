@@ -51,7 +51,7 @@ model Profile {
   lastName       String
   departmentName String
   registerNo     Int               @unique
-  birthDate      DateTime
+  birthDate      String
   gender         String
   age            Int
   userId         String            @unique
@@ -121,7 +121,7 @@ model Course {
 model Work {
   id                   String   @id @default(uuid())
   workDesignation      String
-  courseDescription    String
+  workDescription      String
   startDate            String
   endDate              String
   timePeriod           Int
@@ -166,18 +166,15 @@ model ProfileAbout {
 }
 
 model Comment {
-  id                String    @id @default(uuid())
+  id                String   @id @default(uuid())
   commentBody       String
-  createdAt         DateTime  @default(now())
+  createdAt         DateTime @default(now())
   commentedOnId     String
   commentedById     String
   postId            String
-  commentId         String
-  replyOnComment    Comment   @relation("repliedOn", fields: [commentId], references: [id])
-  commentedByUserId User      @relation("commentedBy", fields: [commentedById], references: [id])
-  userCommentedOn   User      @relation("commentedOn", fields: [commentedOnId], references: [id])
-  postCommentedOn   Post      @relation(fields: [postId], references: [id])
-  comment           Comment[] @relation("repliedOn")
+  commentedByUserId User     @relation("commentedBy", fields: [commentedById], references: [id])
+  userCommentedOn   User     @relation("commentedOn", fields: [commentedOnId], references: [id])
+  postCommentedOn   Post     @relation(fields: [postId], references: [id])
 }
 
 model Reaction {
