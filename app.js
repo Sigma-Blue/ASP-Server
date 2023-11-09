@@ -69,4 +69,9 @@ app.use("/api/v1/post", postRouter);
 app.use("/api/v1/profile", profileRouter);
 app.use("/api/v1/doc", docRouter);
 
+// False Url
+app.all('*', (req, res, next) => {
+	next(new ExpressError('Page Not Found', 404));
+});
+
 module.exports = app;

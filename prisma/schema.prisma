@@ -10,13 +10,13 @@ datasource db {
 model User {
   id                 String        @id @default(uuid())
   userName           String        @unique
-  emailId            String        @unique
   passwordHashed     String
+  registeredAt       DateTime      @default(now())
+  role               role          @default(BASIC)
+  emailId            String        @unique
+  updatedAt          DateTime      @updatedAt
   isVerified         Boolean       @default(false)
   isSigned           Boolean       @default(false)
-  registeredAt       DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
-  role               role          @default(BASIC)
   commentBy          Comment[]     @relation("commentedBy")
   commentOn          Comment[]     @relation("commentedOn")
   location           Location?
@@ -46,75 +46,75 @@ model UserFollows {
 }
 
 model Profile {
-  id             String        @id @default(uuid())
+  id             String            @id @default(uuid())
   firstName      String
   lastName       String
-  userType       userType      @default(USER)
   departmentName String
-  registerNo     Int           @unique
+  registerNo     Int               @unique
   birthDate      String
   gender         String
   age            Int
-  userId         String        @unique
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  createdBy      User          @relation(fields: [userId], references: [id])
-  about          ProfileAbout?
+  userId         String            @unique
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  userType       userType          @default(USER)
+  createdBy      User              @relation(fields: [userId], references: [id])
   Course         Course[]
-  Document       Document[]
-  Image          Image[]
-  Link           Link[]
+  Document       ProfileDocument[]
+  Image          ProfileImage[]
+  Link           ProfileLink[]
   Location       Location?
-  Work           Work[]
+  about          ProfileAbout?
   Skill          Skill[]
+  Work           Work[]
+}
+
+model Post {
+  id              String         @id @default(uuid())
+  postDescription String
+  createdAt       DateTime       @default(now())
+  userId          String
+  postType        postType       @default(GENERAL)
+  createdBy       User           @relation(fields: [userId], references: [id])
+  Comment         Comment[]
+  Document        PostDocument[]
+  Image           PostImage[]
+  Link            PostLink[]
+  about           PostAbout?
+  Reaction        Reaction[]
+  Save            Save[]
 }
 
 model Location {
   id           String   @id @default(uuid())
-  addressLine1 String
-  addressLine2 String
   city         String
   state        String
   country      String
-  postalCode   String
   nationality  String
   contactNo    String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
   profileId    String   @unique @default("NULL")
   userId       String   @unique @default("NULL")
+  addressLine1 String
+  addressLine2 String
+  postalCode   String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   belongsTo    Profile  @relation(fields: [profileId], references: [id])
   relatedTo    User     @relation(fields: [userId], references: [id])
-}
-
-model Post {
-  id              String     @id @default(uuid())
-  postDescription String
-  postType        postType   @default(GENERAL)
-  createdAt       DateTime   @default(now())
-  userId          String
-  createdBy       User       @relation(fields: [userId], references: [id])
-  about           PostAbout?
-  Comment         Comment[]
-  Document        Document[]
-  Image           Image[]
-  Link            Link[]
-  Reaction        Reaction[]
-  Save            Save[]
 }
 
 model Course {
   id                String   @id @default(uuid())
   courseName        String
-  courseDescription String
   startDate         String
   endDate           String
   timePeriod        Int
   instituteName     String
   instituteLocation String
   isRemote          Boolean  @default(false)
-  createdAt         DateTime @default(now())
   profileId         String
+  courseDescription String
+  createdAt         DateTime @default(now())
   belongsTo         Profile  @relation(fields: [profileId], references: [id])
 }
 
@@ -153,7 +153,7 @@ model PostAbout {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   postId           String   @unique
-  postBelongsTo    Post     @relation(fields: [postId], references: [id])
+  belongsTo        Post     @relation(fields: [postId], references: [id])
 }
 
 model ProfileAbout {
@@ -162,42 +162,7 @@ model ProfileAbout {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   profileId        String   @unique
-  profileBelongsTo Profile  @relation(fields: [profileId], references: [id])
-}
-
-model Image {
-  id               String    @id @default(uuid())
-  imageType        imageType
-  imageFilePath    String
-  createdAt        DateTime  @default(now())
-  postId           String
-  profileId        String
-  postBelongsTo    Post      @relation(fields: [postId], references: [id])
-  profileBelongsTo Profile   @relation(fields: [profileId], references: [id])
-}
-
-model Document {
-  id               String   @id @default(uuid())
-  docExtention     extType
-  docType          docType
-  docFilePath      String
-  createdAt        DateTime @default(now())
-  postId           String
-  profileId        String
-  postBelongsTo    Post     @relation(fields: [postId], references: [id])
-  profileBelongsTo Profile  @relation(fields: [profileId], references: [id])
-}
-
-model Link {
-  id               String   @id @default(uuid())
-  linkType         linkType
-  linkName         String
-  linkUrl          String
-  createdAt        DateTime @default(now())
-  postId           String
-  profileId        String
-  postBelongsTo    Post     @relation(fields: [postId], references: [id])
-  profileBelongsTo Profile  @relation(fields: [profileId], references: [id])
+  belongsTo        Profile  @relation(fields: [profileId], references: [id])
 }
 
 model Comment {
@@ -242,6 +207,64 @@ model PasswordReset {
   emailId   String
 }
 
+model PostDocument {
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  postId       String
+  docFilePath  String
+  docExtention extType
+  belongsTo    Post     @relation(fields: [postId], references: [id])
+}
+
+model ProfileDocument {
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  profileId    String
+  docFilePath  String
+  docExtention extType
+  belongsTo    Profile  @relation(fields: [profileId], references: [id])
+}
+
+model PostImage {
+  id            String    @id @default(uuid())
+  createdAt     DateTime  @default(now())
+  postId        String
+  imageName     String
+  imageFilePath String
+  imageType     imageType
+  belongsTo     Post      @relation(fields: [postId], references: [id])
+}
+
+model ProfileImage {
+  id            String    @id @default(uuid())
+  createdAt     DateTime  @default(now())
+  profileId     String
+  imageName     String
+  imageFilePath String
+  imageType     imageType
+  belongsTo     Profile   @relation(fields: [profileId], references: [id])
+}
+
+model PostLink {
+  id        String   @id @default(uuid())
+  linkName  String
+  linkUrl   String
+  createdAt DateTime @default(now())
+  postId    String
+  linkType  linkType
+  belongsTo Post     @relation(fields: [postId], references: [id])
+}
+
+model ProfileLink {
+  id        String   @id @default(uuid())
+  linkName  String
+  linkUrl   String
+  createdAt DateTime @default(now())
+  profileId String
+  linkType  linkType
+  belongsTo Profile  @relation(fields: [profileId], references: [id])
+}
+
 enum role {
   BASIC
   ADMIN
@@ -265,7 +288,7 @@ enum postType {
 enum imageType {
   PROFILE
   BANNER
-  COVERPOST
+  COVER_POST
   POST
 }
 
@@ -274,17 +297,9 @@ enum extType {
   ZIP
 }
 
-enum docType {
-  POST
-  PROFILE
-}
-
 enum linkType {
-  POST
-  PROFILE
+  PROFESSIONAL
+  SOCIAL
+  ACADEMIC
+  GENERAL
 }
-
-// npx prisma migrate dev
-// update_7_0
-// npx prisma generate
-// npm run db-push
