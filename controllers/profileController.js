@@ -1,5 +1,4 @@
 const profileModel = require("./../models/profileModel");
-const userModel = require("./../models/userModel");
 
 //	@route	POST	/createProfile
 //	@desc		Adding Profile for New User
@@ -122,15 +121,35 @@ exports.addCourse = async (req, res) => {
   });
 };
 
-//  @route  POST  /createProfileAbout
-//  @desc   Adding About of Profile for New User
-//  @body   abtDesc,profileId
+//	@route	POST	/createWork
+//	@desc		Adding Work Details for New User
+//	@body		wrkDesc,wrkDesc,sDate,eDate,tPeriod,orgName,orgLoc,isRemote,profileId
 
-exports.addProfileAbout = async (req, res) => {
-  const { abtDesc, profileId } = req.body;
+exports.addWork = async (req, res) => {
+  const {
+    wrkDesg,
+    wrkDesc,
+    sDate,
+    eDate,
+    tPeriod,
+    orgName,
+    orgLoc,
+    isRemote,
+    profileId,
+  } = req.body;
 
-  const { result: createdAbout, error: createdErr } =
-    await profileModel.createProfileAbout(abtDesc, profileId);
+  const { result: createdWork, error: createdErr } =
+    await profileModel.createWork(
+      wrkDesg,
+      wrkDesc,
+      sDate,
+      eDate,
+      tPeriod,
+      orgName,
+      orgLoc,
+      isRemote,
+      profileId
+    );
 
   if (createdErr) {
     return res.status(500).json({
@@ -139,23 +158,57 @@ exports.addProfileAbout = async (req, res) => {
     });
   }
 
-  console.log(createdAbout);
+  console.log(createdWork);
   return res.status(201).json({
     status: "Success",
-    message: `Successfully Saved the About details`,
+    message: `Successfully Saved the Work details`,
   });
 };
 
-//  @route  GET  /:userId
+//	@route	POST	/createSkill
+//	@desc		Adding Skill Details for New User
+//	@body		sName,sLink,sRate,sDate,eDate,tPeriod,orgName,orgLoc,isRemote,profileId
+
+exports.addSkill = async (req, res) => {
+  const { sName, sLink, sRate, tPeriod, orgName, orgLoc, isRemote, profileId } =
+    req.body;
+
+  const { result: createdSkill, error: createdErr } =
+    await profileModel.createSkill(
+      sName,
+      sLink,
+      sRate,
+      tPeriod,
+      orgName,
+      orgLoc,
+      isRemote,
+      profileId
+    );
+
+  if (createdErr) {
+    return res.status(500).json({
+      status: "Failure: CreatedErr",
+      message: `Internal Server Error : ${createdErr}`,
+    });
+  }
+
+  console.log(createdSkill);
+  return res.status(201).json({
+    status: "Success",
+    message: `Successfully Saved the Skill details`,
+  });
+};
+
+//  @route  GET  /:profileId
 //  @desc   Getting the profile for a given userID
 //  @body
 
 exports.getProfile = async (req, res) => {
-  const userId = req.params.userId;
-  console.log(userId.slice(1));
+  const profileId = req.params.userId;
+  console.log(profileId);
 
   const { result: selectedProfile, error: selectedErr } =
-    await profileModel.selectProfileByUserId(userId.slice(1));
+    await profileModel.selectProfileByProfileId(profileId);
 
   if (selectedErr) {
     return res.status(500).json({
@@ -179,10 +232,10 @@ exports.getProfile = async (req, res) => {
 
 exports.getLocation = async (req, res) => {
   const profileId = req.params.profileId;
-  console.log(profileId.slice(1));
+  console.log(profileId);
 
   const { result: selectedLocation, error: selectedErr } =
-    await profileModel.selectLocationByProfileId(profileId.slice(1));
+    await profileModel.selectLocationByProfileId(profileId);
 
   if (selectedErr) {
     return res.status(500).json({
@@ -224,5 +277,155 @@ exports.getCourse = async (req, res) => {
     data: {
       course: selectedCourse,
     },
+  });
+};
+
+//  @route  GET  /work/:profileId
+//  @desc   Getting the work details for a given userID
+//  @body
+
+exports.getWork = async (req, res) => {
+  const profileId = req.params.profileId;
+  console.log(profileId);
+
+  const { result: selectedWork, error: selectedErr } =
+    await profileModel.selectWorksByProfileId(profileId);
+
+  if (selectedErr) {
+    return res.status(500).json({
+      status: "Failure: SelectedErr",
+      message: `Internal Server Error : ${selectedErr}`,
+    });
+  }
+
+  console.log(selectedWork);
+  return res.status(200).json({
+    status: "Success",
+    data: {
+      work: selectedWork,
+    },
+  });
+};
+
+//  @route  GET  /skill/:profileId
+//  @desc   Getting the skill details for a given userID
+//  @body
+
+exports.getSkill = async (req, res) => {
+  const profileId = req.params.profileId;
+  console.log(profileId);
+
+  const { result: selectedSkill, error: selectedErr } =
+    await profileModel.selectSkillsByProfileId(profileId);
+
+  if (selectedErr) {
+    return res.status(500).json({
+      status: "Failure: SelectedErr",
+      message: `Internal Server Error : ${selectedErr}`,
+    });
+  }
+
+  console.log(selectedSkill);
+  return res.status(200).json({
+    status: "Success",
+    data: {
+      skill: selectedSkill,
+    },
+  });
+};
+
+//  @route  DELETE  /delete/location
+//  @desc   Deleting location of the user
+//  @body   courseId, profileId
+
+exports.deleteLocation = async (req, res) => {
+  const { locationId, profileId } = req.body;
+
+  const { result: deletedLocation, error: deletedErr } =
+    await profileModel.deleteLocationByProfileId(locationId, profileId);
+
+  if (deletedErr) {
+    return res.status(500).json({
+      status: "Failure: DeletedErr",
+      message: `Internal Server Error : ${deletedErr}`,
+    });
+  }
+
+  console.log(deletedLocation);
+  return res.status(200).json({
+    status: "Success",
+    message: `Successfully Deleted the Location details`,
+  });
+};
+
+//  @route  DELETE  /delete/course
+//  @desc   Deleting course selected by the user
+//  @body   courseId, profileId
+
+exports.deleteCourse = async (req, res) => {
+  const { courseId, profileId } = req.body;
+
+  const { result: deletedCourse, error: deletedErr } =
+    await profileModel.deleteCourseByProfileId(courseId, profileId);
+
+  if (deletedErr) {
+    return res.status(500).json({
+      status: "Failure: DeletedErr",
+      message: `Internal Server Error : ${deletedErr}`,
+    });
+  }
+
+  console.log(deletedCourse);
+  return res.status(200).json({
+    status: "Success",
+    message: `Successfully Deleted the Course details`,
+  });
+};
+
+//  @route  DELETE  /delete/work
+//  @desc   Deleting work selected by the user
+//  @body   workId, profileId
+
+exports.deleteWork = async (req, res) => {
+  const { workId, profileId } = req.body;
+
+  const { result: deletedWork, error: deletedErr } =
+    await profileModel.deleteWorkByProfileId(workId, profileId);
+
+  if (deletedErr) {
+    return res.status(500).json({
+      status: "Failure: DeletedErr",
+      message: `Internal Server Error : ${deletedErr}`,
+    });
+  }
+
+  console.log(deletedWork);
+  return res.status(200).json({
+    status: "Success",
+    message: `Successfully Deleted the Work details`,
+  });
+};
+
+//  @route  DELETE  /delete/skill
+//  @desc   Deleting skill selected by the user
+//  @body   skillId, profileId
+
+exports.deleteSkill = async (req, res) => {
+  const { skillId, profileId } = req.body;
+
+  const { result: deletedSkill, error: deletedErr } =
+    await profileModel.deleteSkillByProfileId(skillId, profileId);
+
+  if (deletedErr) {
+    return res.status(500).json({
+      status: "Failure: DeletedErr",
+      message: `Internal Server Error : ${deletedErr}`,
+    });
+  }
+
+  console.log(deletedSkill);
+  return res.status(200).json({
+    status: "Success",
+    message: `Successfully Deleted the Skill details`,
   });
 };

@@ -109,121 +109,134 @@ exports.createCourse = async (
   }
 };
 
-//TODO: UPDATING:
+//* For creating profile Work
 
-//* For updating Profile info by Profile ID
-
-exports.updateProfileById = async (
-  id,
-  fName,
-  mName,
-  lName,
-  userType,
-  dptName,
-  regNo,
-  dob,
-  gender,
-  age
-) => {
-  try {
-    const profile = await prisma.profile.update({
-      where: {
-        id: id,
-      },
-      data: {
-        firstName: fName,
-        middleName: mName,
-        lastName: lName,
-        userType: userType,
-        departmentName: dptName,
-        registerNo: regNo,
-        birthDate: dob,
-        gender: gender,
-        age: age,
-      },
-    });
-    return { result: profile, error: null };
-  } catch (err) {
-    return { result: null, error: err.message };
-  }
-};
-
-//* For updating Location info by Location ID
-
-exports.updateLocationById = async (
-  id,
-  addr1,
-  addr2,
-  city,
-  state,
-  country,
-  pin,
-  nationality,
-  contact
-) => {
-  try {
-    const profile = await prisma.profile.update({
-      where: {
-        id: id,
-      },
-      data: {
-        addressLine1: addr1,
-        addressLine2: addr2,
-        city,
-        state,
-        country,
-        postalCode: pin,
-        nationality,
-        contactNo: contact,
-      },
-    });
-    return { result: profile, error: null };
-  } catch (err) {
-    return { result: null, error: err.message };
-  }
-};
-
-//* For updating Course by Course Id
-
-exports.updateCourseById = async (
-  id,
-  crsName,
-  crsDesc,
+exports.createWork = async (
+  wrkDesg,
+  wrkDesc,
   sDate,
   eDate,
   tPeriod,
-  instName,
-  instLocation,
-  isRemote
+  orgName,
+  orgLoc,
+  isRemote,
+  profileId
 ) => {
   try {
-    const course = await prisma.course.update({
-      where: {
-        id: id,
-      },
+    const work = await prisma.work.create({
       data: {
-        courseName: crsName,
-        courseDescription: crsDesc,
+        workDesignation: wrkDesg,
+        workDescription: wrkDesc,
         startDate: sDate,
         endDate: eDate,
         timePeriod: tPeriod,
-        instituteName: instName,
-        instituteLocation: instLocation,
+        organizationName: orgName,
+        organizationLocation: orgLoc,
         isRemote,
+        belongsTo: {
+          connect: { id: profileId },
+        },
       },
     });
-  } catch (err) {}
+    return { result: work, err: null };
+  } catch (err) {
+    return { result: null, error: err.message };
+  }
 };
+
+//* For creating profile Skill
+
+exports.createSkill = async (
+  sName,
+  sLink,
+  sRate,
+  tPeriod,
+  orgName,
+  orgLoc,
+  isRemote,
+  profileId
+) => {
+  try {
+    const skill = await prisma.skill.create({
+      data: {
+        skillName: sName,
+        skillLink: sLink,
+        skillRate: sRate,
+        timePeriod: tPeriod,
+        organizationName: orgName,
+        organizationLocation: orgLoc,
+        isRemote,
+        belongsTo: {
+          connect: { id: profileId },
+        },
+      },
+    });
+    return { result: skill, err: null };
+  } catch (err) {
+    return { result: null, error: err.message };
+  }
+};
+
+//TODO: UPDATING:
 
 //TODO: DELETING:
 
-//* For deleting course by using Course ID
+//* For deleting location by using  profileID
 
-exports.deleteCourseById = async (id) => {
+exports.deleteLocationByProfileId = async (locationId, profileId) => {
+  try {
+    const course = await prisma.location.deleteMany({
+      where: {
+        id: locationId,
+        profileId: profileId,
+      },
+    });
+    return { result: null, error: null };
+  } catch (err) {
+    return { result: null, error: err.message };
+  }
+};
+
+//* For deleting course by using profileID
+
+exports.deleteCourseByProfileId = async (courseId, profileId) => {
   try {
     const course = await prisma.course.deleteMany({
       where: {
-        id: id,
+        id: courseId,
+        profileId: profileId,
+      },
+    });
+    return { result: null, error: null };
+  } catch (err) {
+    return { result: null, error: err.message };
+  }
+};
+
+//* For deleting work by using profileID
+
+exports.deleteWorkByProfileId = async (workId, profileId) => {
+  try {
+    const course = await prisma.work.deleteMany({
+      where: {
+        id: workId,
+        profileId: profileId,
+      },
+    });
+    return { result: null, error: null };
+  } catch (err) {
+    return { result: null, error: err.message };
+  }
+};
+
+//* For deleting skill by using profileID
+
+exports.deleteSkillByProfileId = async (skillId, profileId) => {
+  try {
+    const course = await prisma.skill.deleteMany({
+      where: {
+        id: skillId,
+        profileId: profileId,
       },
     });
     return { result: null, error: null };
@@ -236,11 +249,17 @@ exports.deleteCourseById = async (id) => {
 
 //* For Selecting the unique Profile by UserId
 
-exports.selectProfileByUserId = async (id) => {
+exports.selectProfileByProfileId = async (id) => {
   try {
     const profile = await prisma.profile.findUnique({
       where: {
-        userId: id,
+        id: id,
+      },
+      include: {
+        Location: true,
+        Course: true,
+        Work: true,
+        Skill: true,
       },
     });
     return { result: profile, error: null };
@@ -264,21 +283,6 @@ exports.selectLocationByProfileId = async (id) => {
   }
 };
 
-//* For Selecting the unique Location by UserId
-
-exports.selectLocationByUserId = async (id) => {
-  try {
-    const location = await prisma.location.findUnique({
-      where: {
-        userId: id,
-      },
-    });
-    return { result: location, error: null };
-  } catch (err) {
-    return { result: null, error: err.message };
-  }
-};
-
 //* For Selecting the set of Courses by ProfileId
 
 exports.selectCoursesByProfileId = async (id) => {
@@ -289,6 +293,36 @@ exports.selectCoursesByProfileId = async (id) => {
       },
     });
     return { result: course, error: null };
+  } catch (err) {
+    return { result: null, error: err.message };
+  }
+};
+
+//* For Selecting the set of Works by ProfileId
+
+exports.selectWorksByProfileId = async (id) => {
+  try {
+    const work = await prisma.work.findMany({
+      where: {
+        profileId: id,
+      },
+    });
+    return { result: work, error: null };
+  } catch (err) {
+    return { result: null, error: err.message };
+  }
+};
+
+//* For Selecting the set of Skills by ProfileId
+
+exports.selectSkillsByProfileId = async (id) => {
+  try {
+    const skill = await prisma.skill.findMany({
+      where: {
+        profileId: id,
+      },
+    });
+    return { result: skill, error: null };
   } catch (err) {
     return { result: null, error: err.message };
   }
