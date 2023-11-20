@@ -305,7 +305,7 @@ exports.deletePost = async (req, res) => {
 
 exports.getHomePage = async (req, res) => {
   const { size, skip } = req.query;
-  const { userId } = req.body;
+  const { userId } = req.params;
 
   const { result: selectedPost, error: selectErr } =
     await postModel.selectPostsForHomePage(Number(size), Number(skip), userId);

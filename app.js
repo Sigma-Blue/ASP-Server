@@ -10,8 +10,7 @@ const userRouter = require("./routes/v1/userRouter");
 const postRouter = require("./routes/v1/postRouter");
 const profileRouter = require("./routes/v1/profileRouter");
 const docRouter = require("./routes/v1/docRouter");
-const postController = require("./controllers/postController");
-
+const homedirectRouter = require("./routes/v1/homedirectRouter");
 const app = express();
 
 //TODO: GLOBAL MIDDLEWARES
@@ -69,7 +68,7 @@ app.use("/api/v1/user", userRouter);
 app.use("/api/v1/post", postRouter);
 app.use("/api/v1/profile", profileRouter);
 app.use("/api/v1/doc", docRouter);
-app.use("/api/v1/homePage", postController.getHomePage);
+app.use("/api/v1/homePage/", homedirectRouter);
 
 // False Url
 app.all("*", (req, res, next) => {
