@@ -14,7 +14,14 @@ router.route("/newComment").post(postController.addComment);
 router.route("/newReaction").post(postController.addReaction);
 router.route("/newSave").post(postController.addSave);
 
-//DELETE COMMENT,REACTION,SAVED,POST
+// DISPLAY POST DETAILS
+
+router.route("/:postId").get(postController.getPost);
+router.route("/comment/:postId").get(postController.getComment);
+router.route("/reaction/:postId").get(postController.getReaction);
+router.route("/save/:postId").get(postController.getSave);
+
+// DELETE COMMENT,REACTION,SAVED,POST
 
 router.route("/delete/comment").delete(postController.deleteComment);
 router.route("/delete/reaction").delete(postController.deleteReaction);
