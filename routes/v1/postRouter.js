@@ -16,10 +16,10 @@ router.route("/newSave").post(postController.addSave);
 
 // DISPLAY POST DETAILS
 
-router.route("/:postid").get(postController.getPost);
-router.route("/comment/:postid").get(postController.getComment);
-router.route("/reaction/:postid").get(postController.getReaction);
-router.route("/save/:postid").get(postController.getSave);
+router.route("/:postId").get(postController.getPost);
+router.route("/comment/:postId").get(postController.getComment);
+router.route("/reaction/:postId").get(postController.getReaction);
+router.route("/save/:postId").get(postController.getSave);
 
 // DELETE COMMENT,REACTION,SAVED,POST
 
