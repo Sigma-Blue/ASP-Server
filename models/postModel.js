@@ -229,16 +229,12 @@ exports.selectPostsByPostId = async (id) => {
   try {
     const post = await prisma.post.findMany({
       where: {
-        id: id,
+        userId: id,
       },
       include: {
-        Reaction: true,
-        Comment: true,
-        Save: true,
-        Document: true,
-        Link: true,
-        Image: true,
-        _count: true,
+        reaction: true,
+        comment: true,
+        save: true,
       },
     });
     return { result: post, error: null };
@@ -297,73 +293,6 @@ exports.selectCommentsByUserId = async (id) => {
       },
     });
     return { result: comment, error: null };
-  } catch (err) {
-    return { result: null, error: err.message };
-  }
-};
-
-//* For Selecting the set of Commented by Profile Id
-
-exports.selectCommentsByProfileId = async (id) => {
-  try {
-    const comment = await prisma.comment.findMany({
-      where: {
-        postId: id,
-      },
-    });
-    return { result: comment, error: null };
-  } catch (err) {
-    return { result: null, error: err.message };
-  }
-};
-
-//* For Selecting the set of Reaction by Profile Id
-
-exports.selectReactionsByProfileId = async (id) => {
-  try {
-    const reaction = await prisma.reaction.findMany({
-      where: {
-        postId: id,
-      },
-    });
-    return { result: reaction, error: null };
-  } catch (err) {
-    return { result: null, error: err.message };
-  }
-};
-
-//* For Selecting the set of Commented by Profile Id
-
-exports.selectSavesByProfileId = async (id) => {
-  try {
-    const saved = await prisma.save.findMany({
-      where: {
-        postId: id,
-      },
-    });
-    return { result: saved, error: null };
-  } catch (err) {
-    return { result: null, error: err.message };
-  }
-};
-
-//* For Selecting the set of Commented by Profile Id
-
-exports.selectPostsForHomePage = async (size, skip, userId) => {
-  try {
-    const selectedPosts = await prisma.post.findMany({
-      skip: skip,
-      take: size,
-      where: {
-        userId: {
-          not: {
-            equals: userId,
-          },
-        },
-      },
-    });
-
-    return { result: selectedPosts, error: null };
   } catch (err) {
     return { result: null, error: err.message };
   }

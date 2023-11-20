@@ -68,7 +68,7 @@ app.use("/api/v1/user", userRouter);
 app.use("/api/v1/post", postRouter);
 app.use("/api/v1/profile", profileRouter);
 app.use("/api/v1/doc", docRouter);
-app.use("/api/v1/homePage/", homedirectRouter);
+app.use("/api/v1/homePage", postController.getHomePage);
 
 // False Url
 app.all("*", (req, res, next) => {
