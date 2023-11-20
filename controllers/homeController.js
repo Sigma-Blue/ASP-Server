@@ -1,27 +1,27 @@
-const postModel = require('./../models/homeModel');
+const homeModel = require("./../models/homeModel");
 
 // @route 	GET /:userId
 //  @desc   Getting the posts for home page
 //  @body   postId
 
 exports.getHomePage = async (req, res) => {
-	const { size, skip } = req.query;
-	const { userId } = req.params;
+  const { size, skip } = req.query;
+  const { userId } = req.params;
 
-	const { result: selectedPost, error: selectErr } =
-		await homeModel.selectPostsForHomePage(Number(size), Number(skip), userId);
+  const { result: selectedPost, error: selectErr } =
+    await homeModel.selectPostsForHomePage(Number(size), Number(skip), userId);
 
-	if (selectErr) {
-		return res.status(500).json({
-			status: 'Failure: PostErr',
-			message: `Internal Server Error : ${selectErr}`,
-		});
-	}
+  if (selectErr) {
+    return res.status(500).json({
+      status: "Failure: PostErr",
+      message: `Internal Server Error : ${selectErr}`,
+    });
+  }
 
-	console.log(selectedPost);
-	return res.status(200).json({
-		status: 'Success',
-		message: `Successfully Retrieved the Homepage Post details`,
-		data: selectedPost,
-	});
+  console.log(selectedPost);
+  return res.status(200).json({
+    status: "Success",
+    message: `Successfully Retrieved the Homepage Post details`,
+    data: selectedPost,
+  });
 };
