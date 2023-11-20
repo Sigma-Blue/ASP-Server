@@ -1,30 +1,30 @@
-const postModel = require("./../models/postModel");
+const postModel = require('./../models/postModel');
 
 //	@route	POST	/createPost
 //	@desc		Creating New Post
 //	@body       pDesc, pType, userId
 
 exports.addPost = async (req, res) => {
-  const { pDesc, pType, userId } = req.body;
+	const { pDesc, pType, userId } = req.body;
 
-  const { result: createdPost, error: createdErr } = await postModel.createPost(
-    pDesc,
-    pType,
-    userId
-  );
+	const { result: createdPost, error: createdErr } = await postModel.createPost(
+		pDesc,
+		pType,
+		userId
+	);
 
-  if (createdErr) {
-    return res.status(500).json({
-      status: "Failure: CreatedErr",
-      message: `Internal Server Error : ${createdErr}`,
-    });
-  }
+	if (createdErr) {
+		return res.status(500).json({
+			status: 'Failure: CreatedErr',
+			message: `Internal Server Error : ${createdErr}`,
+		});
+	}
 
-  console.log(createdPost);
-  return res.status(201).json({
-    status: "Success",
-    message: `Successfully Saved the Post details : ${userId}`,
-  });
+	console.log(createdPost);
+	return res.status(201).json({
+		status: 'Success',
+		message: `Successfully Saved the Post details : ${userId}`,
+	});
 };
 
 //	@route	POST	/newComment
@@ -32,23 +32,23 @@ exports.addPost = async (req, res) => {
 //	@body       comBody,comOnId,comById,postId
 
 exports.addComment = async (req, res) => {
-  const { comBody, comOnId, comById, postId } = req.body;
+	const { comBody, comOnId, comById, postId } = req.body;
 
-  const { result: createdComment, error: createdErr } =
-    await postModel.createComment(comBody, comOnId, comById, postId);
+	const { result: createdComment, error: createdErr } =
+		await postModel.createComment(comBody, comOnId, comById, postId);
 
-  if (createdErr) {
-    return res.status(500).json({
-      status: "Failure: CreatedErr",
-      message: `Internal Server Error : ${createdErr}`,
-    });
-  }
+	if (createdErr) {
+		return res.status(500).json({
+			status: 'Failure: CreatedErr',
+			message: `Internal Server Error : ${createdErr}`,
+		});
+	}
 
-  console.log(createdComment);
-  return res.status(201).json({
-    status: "Success",
-    message: `Successfully Saved the Comment details`,
-  });
+	console.log(createdComment);
+	return res.status(201).json({
+		status: 'Success',
+		message: `Successfully Saved the Comment details`,
+	});
 };
 
 //	@route	POST	/newReaction
@@ -56,23 +56,23 @@ exports.addComment = async (req, res) => {
 //	@body       postId, reaOn, reaBy
 
 exports.addReaction = async (req, res) => {
-  const { postId, reaOn, reaBy } = req.body;
+	const { postId, reaOn, reaBy } = req.body;
 
-  const { result: createdReaction, error: createdErr } =
-    await postModel.createReaction(reaOn, reaBy, postId);
+	const { result: createdReaction, error: createdErr } =
+		await postModel.createReaction(reaOn, reaBy, postId);
 
-  if (createdErr) {
-    return res.status(500).json({
-      status: "Failure: CreatedErr",
-      message: `Internal Server Error : ${createdErr}`,
-    });
-  }
+	if (createdErr) {
+		return res.status(500).json({
+			status: 'Failure: CreatedErr',
+			message: `Internal Server Error : ${createdErr}`,
+		});
+	}
 
-  console.log(createdReaction);
-  return res.status(201).json({
-    status: "Success",
-    message: `Successfully Saved the Reaction details`,
-  });
+	console.log(createdReaction);
+	return res.status(201).json({
+		status: 'Success',
+		message: `Successfully Saved the Reaction details`,
+	});
 };
 
 //	@route	POST	/newSave
@@ -80,26 +80,26 @@ exports.addReaction = async (req, res) => {
 //	@body       postId, savOn, savBy
 
 exports.addSave = async (req, res) => {
-  const { postId, savOn, savBy } = req.body;
+	const { postId, savOn, savBy } = req.body;
 
-  const { result: createdSave, error: createdErr } = await postModel.createSave(
-    savOn,
-    savBy,
-    postId
-  );
+	const { result: createdSave, error: createdErr } = await postModel.createSave(
+		savOn,
+		savBy,
+		postId
+	);
 
-  if (createdErr) {
-    return res.status(500).json({
-      status: "Failure: CreatedErr",
-      message: `Internal Server Error : ${createdErr}`,
-    });
-  }
+	if (createdErr) {
+		return res.status(500).json({
+			status: 'Failure: CreatedErr',
+			message: `Internal Server Error : ${createdErr}`,
+		});
+	}
 
-  console.log(createdSave);
-  return res.status(201).json({
-    status: "Success",
-    message: `Successfully Saved the Save details`,
-  });
+	console.log(createdSave);
+	return res.status(201).json({
+		status: 'Success',
+		message: `Successfully Saved the Save details`,
+	});
 };
 
 //  @route  DELETE  /delete/comment
@@ -107,23 +107,23 @@ exports.addSave = async (req, res) => {
 //  @body   commentId
 
 exports.deleteComment = async (req, res) => {
-  const { commentId } = req.body;
+	const { commentId } = req.body;
 
-  const { result: deletedComment, error: deletedErr } =
-    await postModel.deleteCommentById(commentId);
+	const { result: deletedComment, error: deletedErr } =
+		await postModel.deleteCommentById(commentId);
 
-  if (deletedErr) {
-    return res.status(500).json({
-      status: "Failure: DeletedErr",
-      message: `Internal Server Error : ${deletedErr}`,
-    });
-  }
+	if (deletedErr) {
+		return res.status(500).json({
+			status: 'Failure: DeletedErr',
+			message: `Internal Server Error : ${deletedErr}`,
+		});
+	}
 
-  console.log(deletedComment);
-  return res.status(200).json({
-    status: "Success",
-    message: `Successfully Deleted the Comment details`,
-  });
+	console.log(deletedComment);
+	return res.status(200).json({
+		status: 'Success',
+		message: `Successfully Deleted the Comment details`,
+	});
 };
 
 //  @route  DELETE  /delete/reaction
@@ -131,23 +131,23 @@ exports.deleteComment = async (req, res) => {
 //  @body   reactionId
 
 exports.deleteReaction = async (req, res) => {
-  const { reactionId } = req.body;
+	const { reactionId } = req.body;
 
-  const { result: deletedReaction, error: deletedErr } =
-    await postModel.deleteReactionById(reactionId);
+	const { result: deletedReaction, error: deletedErr } =
+		await postModel.deleteReactionById(reactionId);
 
-  if (deletedErr) {
-    return res.status(500).json({
-      status: "Failure: DeletedErr",
-      message: `Internal Server Error : ${deletedErr}`,
-    });
-  }
+	if (deletedErr) {
+		return res.status(500).json({
+			status: 'Failure: DeletedErr',
+			message: `Internal Server Error : ${deletedErr}`,
+		});
+	}
 
-  console.log(deletedReaction);
-  return res.status(200).json({
-    status: "Success",
-    message: `Successfully Deleted the Reaction details`,
-  });
+	console.log(deletedReaction);
+	return res.status(200).json({
+		status: 'Success',
+		message: `Successfully Deleted the Reaction details`,
+	});
 };
 
 //  @route  DELETE  /delete/save
@@ -155,23 +155,23 @@ exports.deleteReaction = async (req, res) => {
 //  @body   saveId
 
 exports.deleteSave = async (req, res) => {
-  const { saveId } = req.body;
+	const { saveId } = req.body;
 
-  const { result: deletedSave, error: deletedErr } =
-    await postModel.deleteSaveById(saveId);
+	const { result: deletedSave, error: deletedErr } =
+		await postModel.deleteSaveById(saveId);
 
-  if (deletedErr) {
-    return res.status(500).json({
-      status: "Failure: DeletedErr",
-      message: `Internal Server Error : ${deletedErr}`,
-    });
-  }
+	if (deletedErr) {
+		return res.status(500).json({
+			status: 'Failure: DeletedErr',
+			message: `Internal Server Error : ${deletedErr}`,
+		});
+	}
 
-  console.log(deletedSave);
-  return res.status(200).json({
-    status: "Success",
-    message: `Successfully Deleted the Save details`,
-  });
+	console.log(deletedSave);
+	return res.status(200).json({
+		status: 'Success',
+		message: `Successfully Deleted the Save details`,
+	});
 };
 
 //  @route  DELETE  /delete/post
@@ -179,21 +179,47 @@ exports.deleteSave = async (req, res) => {
 //  @body   postId
 
 exports.deletePost = async (req, res) => {
-  const { postId } = req.body;
+	const { postId } = req.body;
 
-  const { result: deletedPost, error: deletedErr } =
-    await postModel.deletePostByPostId(postId);
+	const { result: deletedPost, error: deletedErr } =
+		await postModel.deletePostByPostId(postId);
 
-  if (deletedErr) {
-    return res.status(500).json({
-      status: "Failure: DeletedErr",
-      message: `Internal Server Error : ${deletedErr}`,
-    });
-  }
+	if (deletedErr) {
+		return res.status(500).json({
+			status: 'Failure: DeletedErr',
+			message: `Internal Server Error : ${deletedErr}`,
+		});
+	}
 
-  console.log(deletedPost);
-  return res.status(200).json({
-    status: "Success",
-    message: `Successfully Deleted the Post details`,
-  });
+	console.log(deletedPost);
+	return res.status(200).json({
+		status: 'Success',
+		message: `Successfully Deleted the Post details`,
+	});
+};
+
+// @route GET /?size=sizeid&skip=skipid
+//  @desc   Getting the posts for home page
+//  @body   postId
+
+exports.getHomePage = async (req, res) => {
+	const { size, skip } = req.query;
+	const { userId } = req.body;
+
+	const { result: selectedPost, error: selectErr } =
+		await postModel.selectPostsForHomePage(Number(size), Number(skip), userId);
+
+	if (selectErr) {
+		return res.status(500).json({
+			status: 'Failure: PostErr',
+			message: `Internal Server Error : ${selectErr}`,
+		});
+	}
+
+	console.log(selectedPost);
+	return res.status(200).json({
+		status: 'Success',
+		message: `Successfully Retrieved the Homepage Post details`,
+		data: selectedPost,
+	});
 };
