@@ -13,7 +13,7 @@
 		"db-studio": "dotenv -e .env.development -- npx prisma studio",
 		"db-studio:staging": "dotenv -e .env.staging -- npx prisma studio"
 	},
-	"author": "Metta Surendhar",
+	"author": "Sigma Blue Team",
 	"license": "ISC",
 	"dependencies": {
 		"@prisma/client": "^3.8.1",

@@ -10,7 +10,7 @@ const userRouter = require('./routes/v1/userRouter');
 const postRouter = require('./routes/v1/postRouter');
 const profileRouter = require('./routes/v1/profileRouter');
 const docRouter = require('./routes/v1/docRouter');
-const homedRouter = require('./routes/v1/homeRouter');
+const homeRouter = require('./routes/v1/homeRouter');
 const app = express();
 
 //TODO: GLOBAL MIDDLEWARES
@@ -68,11 +68,11 @@ app.use('/api/v1/user', userRouter);
 app.use('/api/v1/post', postRouter);
 app.use('/api/v1/profile', profileRouter);
 app.use('/api/v1/doc', docRouter);
-app.use('/api/v1/homePage');
+app.use('/api/v1/homePage', homeRouter);
 
 // False Url
-app.all('*', (req, res, next) => {
-	next(new ExpressError('Page Not Found', 404));
-});
+// app.all('*', (req, res, next) => {
+// 	next(new ExpressError('Page Not Found', 404));
+// });
 
 module.exports = app;

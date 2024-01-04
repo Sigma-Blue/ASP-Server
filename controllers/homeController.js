@@ -1,8 +1,8 @@
 const postModel = require('./../models/homeModel');
 
-// @route 	GET /:userId
+// @route 	GET /userId?size&skip
 //  @desc   Getting the posts for home page
-//  @body   postId
+//  @body
 
 exports.getHomePage = async (req, res) => {
 	const { size, skip } = req.query;

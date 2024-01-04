@@ -42,10 +42,11 @@ router
 		userController.sendOTP
 	);
 
+router.route('/forgetPassword/verifyOtp').post(userController.verifyOTP);
+
 router
-	.route('/forgetPassword/verifyOtp')
-	.post(userController.verifyOTP)
-	.patch(
+	.route('/forgetPassword')
+	.post(
 		userMiddleware.isUserEmailIdExist,
 		otpMiddleware.removeOtpToken,
 		userController.resetPassword

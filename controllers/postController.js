@@ -2,7 +2,7 @@ const postModel = require('./../models/postModel');
 
 //	@route	POST	/createPost
 //	@desc		Creating New Post
-//	@body       pDesc, pType, userId
+//	@body   pDesc, pType, userId
 
 exports.addPost = async (req, res) => {
 	const { pDesc, pType, userId } = req.body;
@@ -136,7 +136,7 @@ exports.getComment = async (req, res) => {
 	const { postId } = req.params;
 
 	const { result: post, error: postErr } =
-		await postModel.selectCommentsByProfileId(postId);
+		await postModel.selectCommentsByPostId(postId);
 
 	if (postErr) {
 		return res.status(500).json({
@@ -161,7 +161,7 @@ exports.getReaction = async (req, res) => {
 	const { postId } = req.params;
 
 	const { result: post, error: postErr } =
-		await postModel.selectReactionsByProfileId(postId);
+		await postModel.selectReactionsByPostId(postId);
 
 	if (postErr) {
 		return res.status(500).json({
@@ -185,8 +185,9 @@ exports.getReaction = async (req, res) => {
 exports.getSave = async (req, res) => {
 	const { postId } = req.params;
 
-	const { result: post, error: postErr } =
-		await postModel.selectSavesByProfileId(postId);
+	const { result: post, error: postErr } = await postModel.selectSavesByPostId(
+		postId
+	);
 
 	if (postErr) {
 		return res.status(500).json({
@@ -203,12 +204,12 @@ exports.getSave = async (req, res) => {
 	});
 };
 
-//  @route  DELETE  /delete/comment
+//  @route  DELETE  /:commentId
 //  @desc   Deleting comment of the post
-//  @body   commentId
+//  @body
 
 exports.deleteComment = async (req, res) => {
-	const { commentId } = req.body;
+	const { commentId } = req.params;
 
 	const { result: deletedComment, error: deletedErr } =
 		await postModel.deleteCommentById(commentId);
@@ -227,12 +228,12 @@ exports.deleteComment = async (req, res) => {
 	});
 };
 
-//  @route  DELETE  /delete/reaction
+//  @route  DELETE  /:reactionId
 //  @desc   Deleting reaction of the post
 //  @body   reactionId
 
 exports.deleteReaction = async (req, res) => {
-	const { reactionId } = req.body;
+	const { reactionId } = req.params;
 
 	const { result: deletedReaction, error: deletedErr } =
 		await postModel.deleteReactionById(reactionId);
@@ -251,12 +252,12 @@ exports.deleteReaction = async (req, res) => {
 	});
 };
 
-//  @route  DELETE  /delete/save
+//  @route  DELETE  /:saveId
 //  @desc   Deleting saved post
-//  @body   saveId
+//  @body
 
 exports.deleteSave = async (req, res) => {
-	const { saveId } = req.body;
+	const { saveId } = req.params;
 
 	const { result: deletedSave, error: deletedErr } =
 		await postModel.deleteSaveById(saveId);
@@ -275,12 +276,12 @@ exports.deleteSave = async (req, res) => {
 	});
 };
 
-//  @route  DELETE  /delete/post
+//  @route  DELETE  /:postId
 //  @desc   Deleting the user post
 //  @body   postId
 
 exports.deletePost = async (req, res) => {
-	const { postId } = req.body;
+	const { postId } = req.params;
 
 	const { result: deletedPost, error: deletedErr } =
 		await postModel.deletePostByPostId(postId);
